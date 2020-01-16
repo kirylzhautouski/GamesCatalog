@@ -1,7 +1,6 @@
-{% include 'gamecatalog/header.html' %}
+{% extends "gamecatalog/base.html" %}
 
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-
+{% block content %}
 <div>
 
     <input type="checkbox" id="side-checkbox" />
@@ -154,3 +153,5 @@
         </div>
     </div>
 </div>
+
+{% endblock content %}
