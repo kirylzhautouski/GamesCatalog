@@ -3,4 +3,4 @@ from django.views import generic
 
 
 class IndexView(generic.TemplateView):
-    template_name = 'gamecatalog/index.html'
+    template_name = 'gamecatalog/home.html'
