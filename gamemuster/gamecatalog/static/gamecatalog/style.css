@@ -16,13 +16,13 @@ div.header {
     z-index: 99999;
 }
 
-img.header_icon {
+img.header-icon {
     width: 42px;
     height: 42px;
     vertical-align: middle;
 }
 
-h1.header_text {
+h1.header-text {
     font-size: 34px;
     padding-left: 5px;
     color: white;
@@ -55,6 +55,80 @@ h1.header_text {
     font-size: 25px;
     font-weight: 800;
     display: inline;
+}
+
+.filters {
+    margin-top: 20px;
+    margin-left: 25px;
+}
+
+.side-subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+hr.subtitle-line {
+    display: inline-block;
+    width: 90px;
+}
+
+span.filter-tag {
+    color: #E23232;
+    font-weight: 600;
+    font-size: 12px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    background-color: white;
+    padding-right: 4px;
+    padding-left: 4px;
+    margin-left: 2px;
+    border-radius: 80px;
+    margin-right: 6px;
+}
+
+.filter-checkbox {
+    display: none;
+}
+
+#PC:checked + label .filter-tag .PC-checked {
+    display: none;
+}
+
+#PS4:checked + label .filter-tag .PS4-checked {
+    display: none;
+}
+
+#Platformer:checked + label .filter-tag .Platformer-checked {
+    display: none;
+}
+
+.rating-range {
+    border: 0;
+    color: white;
+    background-color: #E23232;
+    font-weight: bold;
+}
+
+#slider-range {
+    width: 150px;
+}
+
+button.apply-filters {
+    border: none;
+    outline: none;
+    background-color: white;
+    box-shadow: 10px 0 20px rgba(0,0,0,0.4);
+    color: #E23232;
+    font-weight: 600;
+    font-size: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 15px;
+    margin-left: 50px;
 }
 
 .side-button-1-wr {
@@ -111,11 +185,11 @@ span.rotate {
     transition: all 280ms ease-in-out;
 }
 
-div.games_container {
+div.games-container {
     text-align: center;
 }
 
-div.search_bar {
+div.search-bar {
     text-align: center;
     margin-top: 30px;
 }
@@ -170,7 +244,7 @@ div.games {
     margin-top: 30px;
 }
 
-div.game_card {
+div.game-card {
     width: 200px;
     height: 200px;
     background-image: url(images/card_background.jpg);
@@ -178,7 +252,7 @@ div.game_card {
     position: relative;
 }
 
-div.game_info {
+div.game-info {
     text-align: left;
     padding-left: 10px;
     background: rgba(0, 0, 0, 0.7);
@@ -189,24 +263,24 @@ div.game_info {
     position: absolute;
 }
 
-h1.game_name {
+h1.game-name {
     color: white;
     font-weight: 600;
     margin-top: 3px;
     margin-bottom: 0;
 }
 
-p.game_genre {
+p.game-genre {
     color: white;
     font-weight: 600;
     margin-bottom: 0;
 }
 
-div.game_tags {
+div.game-tags {
     margin-top: 5px;
 }
 
-span.game_tag {
+span.game-tag {
     color: black;
     font-weight: 600;
     font-size: 12px;
@@ -222,14 +296,13 @@ span.game_tag {
 
 div.pages {
     margin-top: 20px;
-    margin-bottom: 500px;
 }
 
 .top-buffer {
     margin-top: 50px;
 }
 
-button.page_button {
+button.page-button {
     width: 30px;
     height: 30px;
     background-color: #E23232;

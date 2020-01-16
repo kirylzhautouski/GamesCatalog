@@ -1,5 +1,7 @@
 {% extends "gamecatalog/base.html" %}
 
+
+
 {% block content %}
 <div>
 
@@ -12,6 +14,62 @@
         <h3 class="side-title">Filters</h3>
 
         <hr>
+
+        <form>
+
+            <div class="filters">
+                <h5 class="side-subtitle">Platforms</h5>
+
+                <hr class="subtitle-line">
+
+                 <div class="platform-filters">
+                     <input type="checkbox" id="PC" class="filter-checkbox"/>
+
+                     <label for="PC">
+                         <span class="filter-tag">
+                             <span class="PC-checked">+</span>
+                             PC
+                        </span>
+                     </label>
+
+                     <input type="checkbox" id="PS4" class="filter-checkbox"/>
+                     <label for="PS4">
+                         <span class="filter-tag">
+                             <span class="PS4-checked">+</span>
+                             PS4
+                        </span>
+                     </label>
+                </div>
+
+                <h5 class="side-subtitle">Genres</h5>
+
+                <hr class="subtitle-line">
+
+                <div class="genre-filters">
+                    <input type="checkbox" id="Platformer" class="filter-checkbox"/>
+
+                    <label for="Platformer">
+                        <span class="filter-tag">
+                            <span class="Platformer-checked">+</span>
+                            Platformer
+                        </span>
+                    </label>
+                </div>
+
+                <h5 class="side-subtitle">User rating</h5>
+
+                <br>
+
+                <p>
+                  <input type="text" class="rating-range" id="amount" readonly>
+                </p>
+
+                <div id="slider-range"></div>
+
+                <button class="apply-filters">Apply</button>
+            </div>
+        </form>
+
     </div>
 
     <div class="side-button-1-wr">
@@ -20,8 +78,8 @@
         </label>
     </div>
 
-    <div class="games_container">
-        <div class="search_bar">
+    <div class="games-container">
+        <div class="search-bar">
             <form>
                 <div class="search">
                     <input type="search" placeholder="Search...">
@@ -33,16 +91,16 @@
         <div class="container games">
             <div class="row">
                 <div class="col-sm text-center">
-                    <div class="game_card">
-                        <div class="game_info">
-                            <h1 class="game_name">PACMAN</h1>
-                            <p class="game_genre">arcade oldschool</p>
+                    <div class="game-card">
+                        <div class="game-info">
+                            <h1 class="game-name">PACMAN</h1>
+                            <p class="game-genre">arcade oldschool</p>
 
-                            <div class="game_tags">
-                                <span class="game_tag">
+                            <div class="game-tags">
+                                <span class="game-tag">
                                     Open
                                 </span>
-                                <span class="game_tag">
+                                <span class="game-tag">
                                     MUST
                                 </span>
                             </div>
@@ -50,16 +108,16 @@
                     </div>
                 </div>
                 <div class="col-sm text-center">
-                  <div class="game_card">
-                        <div class="game_info">
-                            <h1 class="game_name">PACMAN</h1>
-                            <p class="game_genre">arcade oldschool</p>
+                  <div class="game-card">
+                        <div class="game-info">
+                            <h1 class="game-name">PACMAN</h1>
+                            <p class="game-genre">arcade oldschool</p>
 
-                            <div class="game_tags">
-                                <span class="game_tag">
+                            <div class="game-tags">
+                                <span class="game-tag">
                                     Open
                                 </span>
-                                <span class="game_tag">
+                                <span class="game-tag">
                                     MUST
                                 </span>
                             </div>
@@ -67,16 +125,16 @@
                     </div>
                 </div>
                 <div class="col-sm text-center">
-                  <div class="game_card">
-                        <div class="game_info">
-                            <h1 class="game_name">PACMAN</h1>
-                            <p class="game_genre">arcade oldschool</p>
+                  <div class="game-card">
+                        <div class="game-info">
+                            <h1 class="game-name">PACMAN</h1>
+                            <p class="game-genre">arcade oldschool</p>
 
-                            <div class="game_tags">
-                                <span class="game_tag">
+                            <div class="game-tags">
+                                <span class="game-tag">
                                     Open
                                 </span>
-                                <span class="game_tag">
+                                <span class="game-tag">
                                     MUST
                                 </span>
                             </div>
@@ -87,16 +145,16 @@
 
              <div class="row top-buffer">
                 <div class="col-sm text-center">
-                    <div class="game_card">
-                        <div class="game_info">
-                            <h1 class="game_name">PACMAN</h1>
-                            <p class="game_genre">arcade oldschool</p>
+                    <div class="game-card">
+                        <div class="game-info">
+                            <h1 class="game-name">PACMAN</h1>
+                            <p class="game-genre">arcade oldschool</p>
 
-                            <div class="game_tags">
-                                <span class="game_tag">
+                            <div class="game-tags">
+                                <span class="game-tag">
                                     Open
                                 </span>
-                                <span class="game_tag">
+                                <span class="game-tag">
                                     MUST
                                 </span>
                             </div>
@@ -104,16 +162,16 @@
                     </div>
                 </div>
                 <div class="col-sm text-center">
-                  <div class="game_card">
-                        <div class="game_info">
-                            <h1 class="game_name">PACMAN</h1>
-                            <p class="game_genre">arcade oldschool</p>
+                  <div class="game-card">
+                        <div class="game-info">
+                            <h1 class="game-name">PACMAN</h1>
+                            <p class="game-genre">arcade oldschool</p>
 
-                            <div class="game_tags">
-                                <span class="game_tag">
+                            <div class="game-tags">
+                                <span class="game-tag">
                                     Open
                                 </span>
-                                <span class="game_tag">
+                                <span class="game-tag">
                                     MUST
                                 </span>
                             </div>
@@ -121,16 +179,16 @@
                     </div>
                 </div>
                 <div class="col-sm text-center">
-                  <div class="game_card">
-                        <div class="game_info">
-                            <h1 class="game_name">PACMAN</h1>
-                            <p class="game_genre">arcade oldschool</p>
+                  <div class="game-card">
+                        <div class="game-info">
+                            <h1 class="game-name">PACMAN</h1>
+                            <p class="game-genre">arcade oldschool</p>
 
-                            <div class="game_tags">
-                                <span class="game_tag">
+                            <div class="game-tags">
+                                <span class="game-tag">
                                     Open
                                 </span>
-                                <span class="game_tag">
+                                <span class="game-tag">
                                     MUST
                                 </span>
                             </div>
@@ -141,13 +199,13 @@
         </div>
 
         <div class="pages">
-            <button class="page_button current">
+            <button class="page-button current">
                 1
             </button>
-            <button class="page_button">
+            <button class="page-button">
                 2
             </button>
-            <button class="page_button">
+            <button class="page-button">
                 3
             </button>
         </div>
