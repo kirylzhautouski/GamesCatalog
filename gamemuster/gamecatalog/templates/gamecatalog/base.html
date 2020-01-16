@@ -1,32 +1,30 @@
-{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/style.css' %}">
 
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-<script>
-      $( function() {
-        $( "#slider-range" ).slider({
-          range: true,
-          min: 0,
-          max: 10,
-          values: [ 2, 10 ],
-          slide: function( event, ui ) {
-            $( "#amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-          }
-        });
-        $( "#amount" ).val( $( "#slider-range" ).slider( "values", 0 ) +
-          " - " + $( "#slider-range" ).slider( "values", 1 ) );
-      } );
-</script>
+    {% block scripts %}
+    {% endblock scripts %}
 
-{% include 'gamecatalog/header.html' %}
+    {% include "gamecatalog/scripts.html" %}
+
+</head>
+
+<body>
+    {% include 'gamecatalog/header.html' %}
+
+    {% block content %}{% endblock content %}`
+</body>
+
+</html>
 
 
-{% block content %}{% endblock content %}
+
