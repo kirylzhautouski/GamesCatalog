@@ -36,7 +36,7 @@
 .details-text {
     font-weight: 900;
     font-size: 16px;
-    color: #696969;
+    color: #4A4A4A;
 }
 
 .screenshot {
@@ -84,4 +84,19 @@
 
 .margin-left {
     margin-left: 10px;
+}
+
+.tweet-card {
+    background-color: #E23232;
+    margin-top: 10px;
+    padding: 8px;
+    color: white;
+    font-weight: 800;
+    box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    margin-right: 50px;
+}
+
+.tweet-author {
+    float: right;
+    margin-right: 10px;
 }
