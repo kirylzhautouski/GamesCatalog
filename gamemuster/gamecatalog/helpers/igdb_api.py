@@ -2,7 +2,7 @@
 class IGDB_API:
 
     @staticmethod
-    def get_all_games():
+    def get_all_games(games_count=10):
         pass
 
     @staticmethod
