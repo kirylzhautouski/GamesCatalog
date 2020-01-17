@@ -12,7 +12,10 @@ class IGDB_API:
     @classmethod
     def get_all_games(cls, games_count=10):
         r = requests.post("https://api-v3.igdb.com/games", headers=cls.headers,
-                          data=f'fields name,popularity; sort popularity desc; limit {games_count};')
+                          data=f'fields name; sort popularity desc; limit {games_count};')
+
+        if r.status_code != 200:
+            r.raise_for_status()
 
         return json.loads(r.text)
 
