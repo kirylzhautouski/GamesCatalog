@@ -3,6 +3,10 @@ import json
 import requests
 
 
+class InvalidGameIDError(Exception):
+    pass
+
+
 # noinspection PyPep8Naming
 class IGDB_API:
 
@@ -11,7 +15,7 @@ class IGDB_API:
 
     @classmethod
     def get_all_games(cls, games_count=10):
-        r = requests.post("https://api-v3.igdb.com/games", headers=cls.headers,
+        r = requests.post(cls.url, headers=cls.headers,
                           data=f'fields name; sort popularity desc; limit {games_count};')
 
         if r.status_code != 200:
@@ -27,3 +31,6 @@ class IGDB_API:
 if __name__ == "__main__":
     games_info = IGDB_API.get_all_games()
     print(games_info)
+
+    # most_popular_game = games_info[0]
+    # print(IGDB_API.get_game(115278))
