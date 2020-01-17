@@ -1,0 +1,102 @@
+.details-column {
+    padding-top: 30px;
+}
+
+.details-name {
+    font-weight: 800;
+    font-size: 40px;
+    margin-bottom: 0;
+    display: inline;
+}
+
+.details-tag {
+    color: white;
+    background-color: #E23232;
+    box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    font-size: 28px;
+    font-weight: 800;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 18px;
+    padding-left: 18px;
+    vertical-align: top;
+}
+
+.details-genre {
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.details-title {
+    font-weight: 800;
+    font-size: 20px;
+    margin-top: 22px;
+}
+
+.details-text {
+    font-weight: 900;
+    font-size: 16px;
+    color: #4A4A4A;
+}
+
+.screenshot {
+    height: 150px;
+    width: 250px;
+}
+
+.margin-top {
+    margin-top: 20px;
+}
+
+.tags-column {
+    margin-top: 60px;
+}
+
+.green-background {
+    background-color: #88C452;
+}
+
+.orange-background {
+    background-color: #E38428;
+}
+
+.ratings {
+    padding-top: 13px;
+    padding-bottom: 13px;
+    padding-right: 9px;
+    padding-left: 9px;
+    box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    margin-right: 40px;
+}
+
+.rating-title {
+    color: white;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+.rating-content {
+    float: right;
+    color: white;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+.margin-left {
+    margin-left: 10px;
+}
+
+.tweet-card {
+    background-color: #E23232;
+    margin-top: 10px;
+    padding: 8px;
+    color: white;
+    font-weight: 800;
+    box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    margin-right: 50px;
+}
+
+.tweet-author {
+    float: right;
+    margin-right: 10px;
+}

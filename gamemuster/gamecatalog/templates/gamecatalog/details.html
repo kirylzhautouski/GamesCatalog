@@ -1,0 +1,220 @@
+{% extends "gamecatalog/base.html" %}
+
+{% load static %}
+
+{% block styles %}
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/details_style.css' %}">
+{% endblock styles %}
+
+{% block content %}
+
+    <div class="container-fluid no-padding">
+
+        <div class="row">
+
+            <div class="col-6 details-column">
+                <div>
+                     <h1 class="details-name">
+                        PACMAN
+                     </h1>
+
+                     <span class="details-tag">
+                         MUST
+                     </span>
+                </div>
+
+                <h7 class="details-genre">
+                    arcade oldschool
+                </h7>
+
+                <h3 class="details-title">
+                    Description
+                </h3>
+
+                <p class="details-text">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consectetur ea facere harum id impedit nam nesciunt tempore tenetur voluptas? Debitis illum ipsam pariatur possimus quasi totam veniam. Consequatur, saepe!
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci earum ex illo magni nam repellendus saepe. Aliquid at consequatur, dicta doloremque enim error fuga libero nam provident quam repellat rerum.
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam, aperiam assumenda at autem deserunt distinctio minima neque officia officiis quasi quibusdam quos reiciendis reprehenderit, sint soluta. Ab distinctio eum fugiat?
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi asperiores consequuntur, cumque deleniti distinctio eius excepturi id ipsa labore laboriosam laborum magni nemo obcaecati perferendis sapiente sequi unde voluptas voluptates.
+
+                </p>
+
+                <h3 class="details-title">
+                    Release Date
+                </h3>
+
+                <p class="details-text">
+                    Nov 1992
+                </p>
+
+                <h3 class="details-title">
+                    Screenshots
+                </h3>
+
+                <div class="container-fluid no-padding margin-top">
+                    <div class="row">
+                        <div class="col">
+                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
+                        </div>
+                        <div class="col">
+                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
+                        </div>
+                        <div class="col">
+                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
+                        </div>
+                    </div>
+
+                    <div class="row margin-top">
+                        <div class="col">
+                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
+                        </div>
+                        <div class="col">
+                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
+                        </div>
+                        <div class="col">
+                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-3 details-column tags-column">
+
+                <h3 class="details-title">
+                    Ratings
+                </h3>
+
+                <div class="ratings green-background">
+                    <span class="rating-title">Users</span>
+
+                    <span class="rating-content">7.6 (123 reviews)</span>
+                </div>
+
+                <div class="ratings orange-background margin-top">
+                    <span class="rating-title">Critics</span>
+
+                    <span class="rating-content">4.0 (123 reviews)</span>
+                </div>
+
+                <h3 class="details-title">
+                    Genres
+                </h3>
+
+                <span class="details-tag">
+                    Arcade
+                </span>
+
+                <span class="details-tag margin-left">
+                    Action
+                </span>
+
+                <h3 class="details-title">
+                    Platforms
+                </h3>
+
+                <span class="details-tag">
+                    PC
+                </span>
+
+                <span class="details-tag margin-left">
+                    PS4
+                </span>
+
+            </div>
+
+            <div class="col-3 details-column">
+
+                <h1 class="details-name">
+                    #Pacman Tweets
+                </h1>
+
+                <div class="tweet-card">
+
+                    <p class="tweet-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
+                    </p>
+
+                    <span class="tweet-date">
+                        15.03.2018 20:20
+                    </span>
+
+                    <span class="tweet-author">
+                        @tweet_author
+                    </span>
+
+                </div>
+
+                <div class="tweet-card">
+
+                    <p class="tweet-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
+                    </p>
+
+                    <span class="tweet-date">
+                        15.03.2018 20:20
+                    </span>
+
+                    <span class="tweet-author">
+                        @tweet_author
+                    </span>
+
+                </div>
+
+                <div class="tweet-card">
+
+                    <p class="tweet-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
+                    </p>
+
+                    <span class="tweet-date">
+                        15.03.2018 20:20
+                    </span>
+
+                    <span class="tweet-author">
+                        @tweet_author
+                    </span>
+
+                </div>
+
+                <div class="tweet-card">
+
+                    <p class="tweet-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
+                    </p>
+
+                    <span class="tweet-date">
+                        15.03.2018 20:20
+                    </span>
+
+                    <span class="tweet-author">
+                        @tweet_author
+                    </span>
+
+                </div>
+
+                <div class="tweet-card">
+
+                    <p class="tweet-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
+                    </p>
+
+                    <span class="tweet-date">
+                        15.03.2018 20:20
+                    </span>
+
+                    <span class="tweet-author">
+                        @tweet_author
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock content %}
