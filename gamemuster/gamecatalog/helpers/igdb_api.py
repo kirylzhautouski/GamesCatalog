@@ -24,6 +24,14 @@ class IGDB_API:
     keywords_url = f'{base_url}keywords'
     genres_url = f'{base_url}genres'
     platforms_url = f'{base_url}platforms'
+    release_dates_url = f'{base_url}release_dates'
+    screenshots_url = f'{base_url}screenshots'
+
+    keywords_column_name = 'slug'
+    genres_column_name = 'slug'
+    platforms_column_name = 'slug'
+    release_dates_column_name = 'human'
+    screenshots_column_name = 'url'
 
     headers = {'user-key': '47eeca1282bc48976b6949820fb991f1'}
 
@@ -77,7 +85,7 @@ class IGDB_API:
 
     @classmethod
     def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None):
-        # Use args to filter games, implement methods to retrieve all platforms and genres
+        # Use args to filter games
 
         games_info = cls.__make_request(cls.games_url, f'fields name,cover,genres,keywords; sort popularity desc;\
         limit {games_count}; ' + cls.__build_filters(platform_ids, genre_ids, user_rating_range))
@@ -97,7 +105,7 @@ class IGDB_API:
 
                 genre_ids.update(genre_ids_for_game)
 
-        genres = cls.get_slugs_at_url(cls.genres_url, genre_ids)
+        genres = cls.get_resources_at_url(cls.genres_url, cls.genres_column_name, genre_ids)
 
         keyword_ids = set()
         for game_info in games_info:
@@ -109,7 +117,7 @@ class IGDB_API:
 
                 keyword_ids.update(keyword_ids_for_game)
 
-        keywords = cls.get_slugs_at_url(cls.keywords_url, keyword_ids)
+        keywords = cls.get_resources_at_url(cls.keywords_url, cls.keywords_column_name, keyword_ids)
 
         for game_info in games_info:
             game_info['cover'] = covers_for_games[game_info['id']]
@@ -129,15 +137,38 @@ class IGDB_API:
         return games_info
 
     @classmethod
-    def get_game(cls, game_id):
-        # TODO: determine what kind of data we need
+    def __map_ids_to_names(cls, ids, url, column_name):
+        if ids:
+            genres = cls.get_resources_at_url(url, column_name, ids)
 
-        game_info = cls.__make_request(cls.games_url, f'fields name; where id = {game_id};')
+            for i, genre_id in enumerate(ids):
+                ids[i] = genres[genre_id]
+
+    @classmethod
+    def get_game(cls, game_id):
+
+        game_info = cls.__make_request(cls.games_url, f'fields name, keywords, genres, summary,\
+        release_dates, screenshots, rating, rating_count, aggregated_rating, aggregated_rating_count;\
+        where id = {game_id};')
 
         if len(game_info) == 0:
             raise InvalidGameIDError()
 
-        return game_info[0]
+        game_info = game_info[0]
+
+        genre_ids = game_info.get('genres')
+        cls.__map_ids_to_names(genre_ids, cls.genres_url, cls.genres_column_name)
+
+        keyword_ids = game_info.get('keywords')
+        cls.__map_ids_to_names(keyword_ids, cls.keywords_url, cls.keywords_column_name)
+
+        release_date_ids = game_info.get('release_dates')
+        cls.__map_ids_to_names(release_date_ids, cls.release_dates_url, cls.release_dates_column_name)
+
+        screenshots_ids = game_info.get('screenshots')
+        cls.__map_ids_to_names(screenshots_ids, cls.screenshots_url, cls.screenshots_column_name)
+
+        return game_info
 
     @classmethod
     def get_covers(cls, cover_ids):
@@ -156,18 +187,17 @@ class IGDB_API:
         return {cover_info['game']: cover_info['url'] for cover_info in covers_info}
 
     @classmethod
-    def get_slugs_at_url(cls, url, ids):
-        # Used to load keywords and genres by their ids
+    def get_resources_at_url(cls, url, column_name, ids):
+        # Used to load keywords and genres and other resources by their ids with the specified column_name
 
-        slugs_info = cls.__make_request(url, f"fields slug; where id = ({str(ids)[1:-1]});\
+        resources_info = cls.__make_request(url, f"fields {column_name}; where id = ({str(ids)[1:-1]});\
         limit {len(ids)};")
 
-        return {slug_info['id']: slug_info['slug'] for slug_info in slugs_info}
+        return {resource_info['id']: resource_info[column_name] for resource_info in resources_info}
 
     @classmethod
-    def get_all_slugs_at_url(cls, url):
-
-        return cls.__make_request(url, f"fields id, slug; limit 50;")
+    def get_all_resources_at_url(cls, url, column_name):
+        return cls.__make_request(url, f"fields id, {column_name}; limit 50;")
 
 
 if __name__ == "__main__":
@@ -175,7 +205,8 @@ if __name__ == "__main__":
     print(games)
 
     most_popular_game = games[0]
-    print(IGDB_API.get_game(115278))
 
-    print(IGDB_API.get_all_slugs_at_url(IGDB_API.genres_url))
-    print(IGDB_API.get_all_slugs_at_url(IGDB_API.platforms_url))
+    print(IGDB_API.get_all_resources_at_url(IGDB_API.genres_url, IGDB_API.genres_column_name))
+    print(IGDB_API.get_all_resources_at_url(IGDB_API.platforms_url, IGDB_API.platforms_column_name))
+
+    print(IGDB_API.get_game(9912))
