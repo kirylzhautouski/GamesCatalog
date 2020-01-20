@@ -13,10 +13,13 @@ class InvalidCoverIDError(Exception):
 
 # noinspection PyPep8Naming
 class IGDB_API:
-    games_url = 'https://api-v3.igdb.com/games'
-    covers_url = 'https://api-v3.igdb.com/covers'
-    keywords_url = 'https://api-v3.igdb.com/keywords'
-    genres_url = 'https://api-v3.igdb.com/genres'
+
+    base_url = 'https://api-v3.igdb.com/'
+
+    games_url = f'{base_url}games'
+    covers_url = f'{base_url}covers'
+    keywords_url = f'{base_url}keywords'
+    genres_url = f'{base_url}genres'
 
     headers = {'user-key': '47eeca1282bc48976b6949820fb991f1'}
 
