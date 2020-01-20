@@ -1,4 +1,5 @@
 import json
+import os
 
 import requests
 
@@ -33,7 +34,7 @@ class IGDB_API:
     RELEASE_DATES_COLUMN_NAME = 'human'
     SCREENSHOTS_COLUMN_NAME = 'url'
 
-    HEADERS = {'user-key': '47eeca1282bc48976b6949820fb991f1'}
+    HEADERS = {'user-key': os.getenv('IGDB_API_KEY')}
 
     MAX_GENRES_FOR_GAME = 3
     MAX_KEYWORDS_FOR_GAME = 3
