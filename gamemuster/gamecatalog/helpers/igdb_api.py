@@ -101,7 +101,7 @@ class IGDB_API:
 
         covers_info = cls.__make_request(cls.covers_url, data)
 
-        if len(covers_info) == 0:
+        if not len(covers_info):
             raise InvalidCoverIDError()
 
         return {cover_info['game']: cover_info['url'] for cover_info in covers_info}
