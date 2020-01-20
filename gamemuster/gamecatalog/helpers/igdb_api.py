@@ -23,6 +23,7 @@ class IGDB_API:
     covers_url = f'{base_url}covers'
     keywords_url = f'{base_url}keywords'
     genres_url = f'{base_url}genres'
+    platforms_url = f'{base_url}platforms'
 
     headers = {'user-key': '47eeca1282bc48976b6949820fb991f1'}
 
@@ -163,6 +164,11 @@ class IGDB_API:
 
         return {slug_info['id']: slug_info['slug'] for slug_info in slugs_info}
 
+    @classmethod
+    def get_all_slugs_at_url(cls, url):
+
+        return cls.__make_request(url, f"fields id, slug; limit 50;")
+
 
 if __name__ == "__main__":
     games = IGDB_API.get_all_games(platform_ids=[4], genre_ids=[13], user_rating_range=(5, 10))
@@ -170,3 +176,6 @@ if __name__ == "__main__":
 
     most_popular_game = games[0]
     print(IGDB_API.get_game(115278))
+
+    print(IGDB_API.get_all_slugs_at_url(IGDB_API.genres_url))
+    print(IGDB_API.get_all_slugs_at_url(IGDB_API.platforms_url))
