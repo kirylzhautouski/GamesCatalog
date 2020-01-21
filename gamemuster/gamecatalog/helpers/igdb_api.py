@@ -36,8 +36,8 @@ class IGDB_API:
 
     HEADERS = {'user-key': os.getenv('IGDB_API_KEY')}
 
-    MAX_GENRES_FOR_GAME = 3
-    MAX_KEYWORDS_FOR_GAME = 3
+    MAX_GENRES_FOR_GAME = 2
+    MAX_KEYWORDS_FOR_GAME = 2
 
     @classmethod
     def __make_request(cls, url, data):
@@ -185,7 +185,7 @@ class IGDB_API:
         if not len(covers_info):
             raise InvalidCoverIDError()
 
-        return {cover_info['game']: cover_info['url'] for cover_info in covers_info}
+        return {cover_info['game']: cover_info['url'][2:] for cover_info in covers_info}
 
     @classmethod
     def get_resources_at_url(cls, url, column_name, ids):
@@ -202,7 +202,7 @@ class IGDB_API:
 
 
 if __name__ == "__main__":
-    games = IGDB_API.get_all_games(platform_ids=[4], genre_ids=[13], user_rating_range=(5, 10))
+    games = IGDB_API.get_all_games()
     print(games)
 
     most_popular_game = games[0]
