@@ -3,6 +3,8 @@ import os
 
 import requests
 
+from django.conf import settings
+
 
 def list_values_comma_separated(values):
     return str(values)[1:-1]
@@ -14,6 +16,10 @@ class InvalidGameIDError(Exception):
 
 class InvalidCoverIDError(Exception):
     pass
+
+
+if not settings.configured:
+    settings.configure()
 
 
 # noinspection PyPep8Naming
@@ -34,7 +40,7 @@ class IGDB_API:
     RELEASE_DATES_COLUMN_NAME = 'human'
     SCREENSHOTS_COLUMN_NAME = 'url'
 
-    HEADERS = {'user-key': os.getenv('IGDB_API_KEY')}
+    HEADERS = {'user-key': settings.IGDB_API_KEY}
 
     MAX_GENRES_FOR_GAME_IN_LIST = 2
     MAX_KEYWORDS_FOR_GAME_IN_LIST = 2
@@ -90,6 +96,8 @@ class IGDB_API:
     @classmethod
     def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None):
         # Use args to filter games
+
+        print(cls.HEADERS)
 
         games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,genres,keywords; sort popularity desc;\
         limit {games_count}; ' + cls.__build_filters(platform_ids, genre_ids, user_rating_range))
