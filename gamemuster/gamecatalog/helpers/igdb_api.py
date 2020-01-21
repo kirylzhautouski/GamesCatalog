@@ -30,14 +30,17 @@ class IGDB_API:
 
     KEYWORDS_COLUMN_NAME = 'slug'
     GENRES_COLUMN_NAME = 'slug'
-    PLATFORMS_COLUMN_NAME = 'slug'
+    PLATFORMS_COLUMN_NAME = 'name'
     RELEASE_DATES_COLUMN_NAME = 'human'
     SCREENSHOTS_COLUMN_NAME = 'url'
 
     HEADERS = {'user-key': os.getenv('IGDB_API_KEY')}
 
-    MAX_GENRES_FOR_GAME = 2
-    MAX_KEYWORDS_FOR_GAME = 2
+    MAX_GENRES_FOR_GAME_IN_LIST = 2
+    MAX_KEYWORDS_FOR_GAME_IN_LIST = 2
+
+    MAX_GENRES_FOR_GAME = 3
+    MAX_KEYWORDS_FOR_GAME = 3
 
     @classmethod
     def __make_request(cls, url, data):
@@ -101,7 +104,7 @@ class IGDB_API:
             genre_ids_for_game = game_info.get('genres')
 
             if genre_ids_for_game is not None:
-                genre_ids_for_game = genre_ids_for_game[0:min(len(genre_ids_for_game), cls.MAX_GENRES_FOR_GAME)]
+                genre_ids_for_game = genre_ids_for_game[0:min(len(genre_ids_for_game), cls.MAX_GENRES_FOR_GAME_IN_LIST)]
                 game_info['genres'] = genre_ids_for_game
 
                 genre_ids.update(genre_ids_for_game)
@@ -113,7 +116,7 @@ class IGDB_API:
             keyword_ids_for_game = game_info.get('keywords')
 
             if keyword_ids_for_game is not None:
-                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game), cls.MAX_KEYWORDS_FOR_GAME)]
+                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game), cls.MAX_KEYWORDS_FOR_GAME_IN_LIST)]
                 game_info['keywords'] = keyword_ids_for_game
 
                 keyword_ids.update(keyword_ids_for_game)
@@ -148,7 +151,7 @@ class IGDB_API:
     @classmethod
     def get_game(cls, game_id):
 
-        game_info = cls.__make_request(cls.GAMES_URL, f'fields name, keywords, genres, summary,\
+        game_info = cls.__make_request(cls.GAMES_URL, f'fields name, platforms, keywords, genres, summary,\
         release_dates, screenshots, rating, rating_count, aggregated_rating, aggregated_rating_count;\
         where id = {game_id};')
 
@@ -158,9 +161,15 @@ class IGDB_API:
         game_info = game_info[0]
 
         genre_ids = game_info.get('genres')
+
+        if genre_ids:
+            del genre_ids[min(len(genre_ids), cls.MAX_GENRES_FOR_GAME):]
         cls.__map_ids_to_names(genre_ids, cls.GENRES_URL, cls.GENRES_COLUMN_NAME)
 
         keyword_ids = game_info.get('keywords')
+
+        if keyword_ids:
+            del keyword_ids[min(len(keyword_ids), cls.MAX_KEYWORDS_FOR_GAME):]
         cls.__map_ids_to_names(keyword_ids, cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME)
 
         release_date_ids = game_info.get('release_dates')
@@ -168,6 +177,18 @@ class IGDB_API:
 
         screenshots_ids = game_info.get('screenshots')
         cls.__map_ids_to_names(screenshots_ids, cls.SCREENSHOTS_URL, cls.SCREENSHOTS_COLUMN_NAME)
+
+        platform_ids = game_info.get('platforms')
+        cls.__map_ids_to_names(platform_ids, cls.PLATFORMS_URL, cls.PLATFORMS_COLUMN_NAME)
+
+        if screenshots_ids:
+            game_info['screenshots'] = list(map(lambda s: s[2:], screenshots_ids))
+
+        if 'rating' in game_info:
+            game_info['rating'] = round(game_info['rating'] / 10, 2)
+
+        if 'aggregated_rating' in game_info:
+            game_info['aggregated_rating'] = round(game_info['aggregated_rating'] / 10, 2)
 
         return game_info
 
@@ -211,3 +232,6 @@ if __name__ == "__main__":
     print(IGDB_API.get_all_resources_at_url(IGDB_API.PLATFORMS_URL, IGDB_API.PLATFORMS_COLUMN_NAME))
 
     print(IGDB_API.get_game(9912))
+
+    print()
+    print(IGDB_API.get_game(115278))

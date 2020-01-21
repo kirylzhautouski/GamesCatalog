@@ -15,18 +15,21 @@
         <div class="row">
 
             <div class="col-6 details-column">
-                <div>
+                <div class="headline">
                      <h1 class="details-name">
-                        PACMAN
+                        {{ game.name }}
                      </h1>
 
-                     <span class="details-tag">
-                         MUST
-                     </span>
+                    {% for keyword in game.keywords %}
+                        <span class="details-tag">
+                             {{ keyword }}
+                        </span>
+                    {% endfor %}
+
                 </div>
 
                 <h7 class="details-genre">
-                    arcade oldschool
+                    {{ game.genres|join:" " }}
                 </h7>
 
                 <h3 class="details-title">
@@ -34,10 +37,8 @@
                 </h3>
 
                 <p class="details-text">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consectetur ea facere harum id impedit nam nesciunt tempore tenetur voluptas? Debitis illum ipsam pariatur possimus quasi totam veniam. Consequatur, saepe!
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci earum ex illo magni nam repellendus saepe. Aliquid at consequatur, dicta doloremque enim error fuga libero nam provident quam repellat rerum.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam, aperiam assumenda at autem deserunt distinctio minima neque officia officiis quasi quibusdam quos reiciendis reprehenderit, sint soluta. Ab distinctio eum fugiat?
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi asperiores consequuntur, cumque deleniti distinctio eius excepturi id ipsa labore laboriosam laborum magni nemo obcaecati perferendis sapiente sequi unde voluptas voluptates.
+
+                    {{ game.summary }}
 
                 </p>
 
@@ -46,7 +47,11 @@
                 </h3>
 
                 <p class="details-text">
-                    Nov 1992
+                    {% if game.release_dates.0 %}
+                        {{ game.release_dates.0 }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
                 </p>
 
                 <h3 class="details-title">
@@ -54,30 +59,29 @@
                 </h3>
 
                 <div class="container-fluid no-padding margin-top">
-                    <div class="row">
-                        <div class="col">
-                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
-                        </div>
-                        <div class="col">
-                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
-                        </div>
-                        <div class="col">
-                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
-                        </div>
-                    </div>
+                        {% for screenshot in game.screenshots|slice:":6" %}
 
-                    <div class="row margin-top">
-                        <div class="col">
-                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
-                        </div>
-                        <div class="col">
-                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
-                        </div>
-                        <div class="col">
-                            <img class="screenshot" src="{% static 'gamecatalog/images/pacman_screenshot.png' %}" />
-                        </div>
-                    </div>
+                            {% if forloop.counter0|divisibleby:"3" == True %}
 
+                                <div class="row margin-top">
+
+                            {% endif %}
+
+                            <div class="col-4">
+                                <img class="screenshot" src="https://{{screenshot}}" />
+                            </div>
+
+                            {% if forloop.counter0|add:"1"|divisibleby:"3" == True %}
+
+                                </div>
+
+                            {% elif forloop.last %}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
                 </div>
             </div>
 
@@ -90,38 +94,50 @@
                 <div class="ratings green-background">
                     <span class="rating-title">Users</span>
 
-                    <span class="rating-content">7.6 (123 reviews)</span>
+                    <span class="rating-content">
+                        {{game.rating}} ({% if game.rating_count %} {{game.rating_count}} {% else %}no {% endif %} reviews)
+                    </span>
                 </div>
 
                 <div class="ratings orange-background margin-top">
                     <span class="rating-title">Critics</span>
 
-                    <span class="rating-content">4.0 (123 reviews)</span>
+                    <span class="rating-content">
+                        {{game.aggregated_rating}} ({% if game.aggregated_rating_count %} {{game.rating_count}} {% else %}no {% endif %} reviews)
+                    </span>
                 </div>
 
                 <h3 class="details-title">
                     Genres
                 </h3>
 
-                <span class="details-tag">
-                    Arcade
-                </span>
-
-                <span class="details-tag margin-left">
-                    Action
-                </span>
+                {% for genre in game.genres %}
+                    <span class="details-tag">
+                        {{ genre }}
+                    </span>
+                {% endfor %}
 
                 <h3 class="details-title">
                     Platforms
                 </h3>
 
-                <span class="details-tag">
-                    PC
-                </span>
+                {% if game.platforms %}
 
-                <span class="details-tag margin-left">
-                    PS4
-                </span>
+                    {% for platform in game.platforms %}
+
+                        <span class="details-tag margin-left">
+                            {{ platform }}
+                        </span>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <span class="details-tag margin-left">
+                            Unknown
+                    </span>
+
+                {% endif %}
 
             </div>
 

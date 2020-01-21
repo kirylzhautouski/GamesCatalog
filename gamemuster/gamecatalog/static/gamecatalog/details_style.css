@@ -12,14 +12,21 @@
 .details-tag {
     color: white;
     background-color: #E23232;
+    display: inline-block;
     box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
     font-size: 28px;
     font-weight: 800;
+    margin-left: 10px;
+    margin-bottom: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
     padding-right: 18px;
     padding-left: 18px;
     vertical-align: top;
+}
+
+.headline {
+    margin-bottom: 30px;
 }
 
 .details-genre {
