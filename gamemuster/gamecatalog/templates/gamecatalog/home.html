@@ -120,7 +120,8 @@
                     {% endifequal %}
 
                         <div class="col-sm text-center">
-                            <div class="game-card" style="background-image: url(https://{{ game.cover }})">
+                            <a href="{% url 'gamecatalog:details' game.id %}">
+                                <div class="game-card" style="background-image: url(https://{{ game.cover }})">
 
                                 <div class="game-info">
                                     <h1 class="game-name">{{ game.name }}</h1>
@@ -137,6 +138,8 @@
                                     </div>
                                 </div>
                             </div>
+                            </a>
+
                         </div>
 
                     {% ifequal forloop.counter0|add:"1"|divisibleby:"3" True %}

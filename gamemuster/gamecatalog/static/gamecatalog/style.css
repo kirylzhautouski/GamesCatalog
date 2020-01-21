@@ -244,6 +244,12 @@ div.games {
     margin-top: 30px;
 }
 
+a.game-card-link {
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+}
+
 div.game-card {
     width: 200px;
     height: 200px;
