@@ -282,6 +282,7 @@ p.game-genre {
     color: white;
     font-weight: 600;
     margin-bottom: 0;
+    white-space: nowrap;
 }
 
 div.game-tags {
@@ -310,13 +311,14 @@ div.pages {
     margin-top: 50px;
 }
 
-button.page-button {
+a.page-button {
     width: 30px;
     height: 30px;
     background-color: #E23232;
     box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
     color: white;
     border: none;
+    display: inline-block;
     outline: none;
     font-size: 20px;
     font-weight: 600;
@@ -325,6 +327,6 @@ button.page-button {
     margin-top: 10px;
 }
 
-button.current {
+a.current {
     transform: translateY(-6px);
 }

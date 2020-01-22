@@ -10,7 +10,30 @@ class IndexView(generic.ListView):
     context_object_name = 'games'
 
     def get_queryset(self):
-        return igdb_api.IGDB_API.get_all_games()
+        games = igdb_api.IGDB_API.get_all_games(games_count=18)
+
+        if 'page' in self.request.GET:
+            current_page = int(self.request.GET['page'])
+        else:
+            current_page = 1
+
+        return games[(current_page - 1) * 6: (current_page - 1) * 6 + 6]
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+
+        if 'page' in self.request.GET:
+            current_page = int(self.request.GET['page'])
+
+            # TODO: fix hardcoded page values later
+            if not (1 <= current_page <= 3):
+                context['current_page'] = 1
+            else:
+                context['current_page'] = current_page
+        else:
+            context['current_page'] = 1
+
+        return context
 
 
 class DetailsView(generic.TemplateView):

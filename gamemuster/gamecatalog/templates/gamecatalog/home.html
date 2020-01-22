@@ -113,7 +113,7 @@
 
         <div class="container games">
 
-                {% for game in games|slice:":6" %}
+                {% for game in games %}
 
                     {% ifequal forloop.counter0|divisibleby:"3" True %}
                         <div class="row top-buffer">
@@ -149,15 +149,19 @@
             </div>
 
         <div class="pages">
-            <button class="page-button current">
-                1
-            </button>
-            <button class="page-button">
-                2
-            </button>
-            <button class="page-button">
-                3
-            </button>
+
+            <h1>
+                {{ params }}
+            </h1>
+
+            {% for i in '123'|make_list %}
+
+                <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
+                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}">
+                    {{ forloop.counter }}
+                </a>
+
+            {% endfor %}
         </div>
     </div>
 </div>

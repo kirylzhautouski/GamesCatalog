@@ -97,14 +97,12 @@ class IGDB_API:
     def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None):
         # Use args to filter games
 
-        print(cls.HEADERS)
-
         games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,genres,keywords; sort popularity desc;\
         limit {games_count}; ' + cls.__build_filters(platform_ids, genre_ids, user_rating_range))
 
         # Load cover, genres, keywords from their ids
 
-        cover_ids = tuple((game_info['cover'] for game_info in games_info))
+        cover_ids = tuple((game_info['cover'] for game_info in games_info if 'cover' in game_info))
         covers_for_games = cls.get_covers(cover_ids)
 
         genre_ids = set()
@@ -124,7 +122,8 @@ class IGDB_API:
             keyword_ids_for_game = game_info.get('keywords')
 
             if keyword_ids_for_game is not None:
-                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game), cls.MAX_KEYWORDS_FOR_GAME_IN_LIST)]
+                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game),
+                                                                  cls.MAX_KEYWORDS_FOR_GAME_IN_LIST)]
                 game_info['keywords'] = keyword_ids_for_game
 
                 keyword_ids.update(keyword_ids_for_game)
@@ -132,7 +131,8 @@ class IGDB_API:
         keywords = cls.get_resources_at_url(cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME, keyword_ids)
 
         for game_info in games_info:
-            game_info['cover'] = covers_for_games[game_info['id']]
+            if game_info['id'] in covers_for_games:
+                game_info['cover'] = covers_for_games[game_info['id']]
 
             genre_ids_for_game = game_info.get('genres')
 
@@ -209,6 +209,8 @@ class IGDB_API:
         else:
             data = f'fields game,url; where id = {cover_ids};'
 
+        data += f'limit {len(cover_ids)};'
+
         covers_info = cls.__make_request(cls.COVERS_URL, data)
 
         if not len(covers_info):
@@ -231,7 +233,7 @@ class IGDB_API:
 
 
 if __name__ == "__main__":
-    games = IGDB_API.get_all_games()
+    games = IGDB_API.get_all_games(games_count=18)
     print(games)
 
     most_popular_game = games[0]
