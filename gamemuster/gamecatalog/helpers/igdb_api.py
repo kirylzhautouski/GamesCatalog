@@ -37,6 +37,7 @@ class IGDB_API:
     KEYWORDS_COLUMN_NAME = 'slug'
     GENRES_COLUMN_NAME = 'slug'
     PLATFORMS_COLUMN_NAME = 'name'
+    PLATFORMS_SLUG_COLUMN_NAME = 'slug'
     RELEASE_DATES_COLUMN_NAME = 'human'
     SCREENSHOTS_COLUMN_NAME = 'url'
 
@@ -245,7 +246,7 @@ class IGDB_API:
 
     @classmethod
     def get_all_resources_at_url(cls, url, column_name):
-        return cls.__make_request(url, f"fields id, {column_name}; limit 50;")
+        return cls.__make_request(url, f"fields id, {column_name}; limit 20;")
 
 
 if __name__ == "__main__":

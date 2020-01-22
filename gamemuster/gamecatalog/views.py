@@ -19,6 +19,11 @@ class IndexView(generic.ListView):
         self.rating_from = None
         self.rating_to = None
 
+        self.platforms = igdb_api.IGDB_API.get_all_resources_at_url(igdb_api.IGDB_API.PLATFORMS_URL,
+                                                                    igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
+
+        self.checked_platforms_ids = None
+
     def dispatch(self, request, *args, **kwargs):
 
         try:
@@ -39,12 +44,19 @@ class IndexView(generic.ListView):
         if 'rating_to' in self.request.GET:
             self.rating_to = int(self.request.GET['rating_to'])
 
+        self.checked_platforms_ids = list()
+        for get_param in self.request.GET:
+            for platform in self.platforms:
+                if platform[igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME] == get_param:
+                    self.checked_platforms_ids.append(platform['id'])
+
         return super().dispatch(request, args, kwargs)
 
     def get_queryset(self):
-        games = igdb_api.IGDB_API.get_all_games(games_count=18, search_query=(self.search_query
-                                                                              if self.search_query != '' else None),
-                                                user_rating_range=(self.rating_from, self.rating_to))
+        games = igdb_api.IGDB_API.get_all_games(games_count=18,
+                                                search_query=(self.search_query if self.search_query != '' else None),
+                                                user_rating_range=(self.rating_from, self.rating_to),
+                                                platform_ids=self.checked_platforms_ids)
 
         return games[(self.current_page - 1) * 6: (self.current_page - 1) * 6 + 6]
 
@@ -60,6 +72,9 @@ class IndexView(generic.ListView):
 
         if self.rating_to:
             context['rating_to'] = self.rating_to
+
+        context['platforms'] = self.platforms
+        context['checked_platforms_ids'] = self.checked_platforms_ids
 
         return context
 

@@ -92,14 +92,6 @@ span.filter-tag {
     display: none;
 }
 
-#PC:checked + label .filter-tag .PC-checked {
-    display: none;
-}
-
-#PS4:checked + label .filter-tag .PS4-checked {
-    display: none;
-}
-
 #Platformer:checked + label .filter-tag .Platformer-checked {
     display: none;
 }

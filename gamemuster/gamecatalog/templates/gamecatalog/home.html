@@ -10,7 +10,7 @@
               range: true,
               min: 0,
               max: 10,
-              values: [ {% if rating_from %} {{ rating_from }} {% else %}2{% endif %}, {% if rating_to %} {{ rating_to }} {% else %}10{% endif %} ],
+              values: [ {% if rating_from %} {{ rating_from }} {% else %}0{% endif %}, {% if rating_to %} {{ rating_to }} {% else %}10{% endif %} ],
               slide: function( event, ui ) {
                 $( "#rating_from" ).val( ui.values[ 0 ] );
                 $( "#rating_to" ).val( ui.values[ 1 ] );
@@ -52,22 +52,31 @@
                 <hr class="subtitle-line">
 
                  <div class="platform-filters">
-                     <input type="checkbox" id="PC" class="filter-checkbox"/>
 
-                     <label for="PC">
-                         <span class="filter-tag">
-                             <span class="PC-checked">+</span>
-                             PC
-                        </span>
-                     </label>
+                     {% for platform in platforms %}
 
-                     <input type="checkbox" id="PS4" class="filter-checkbox"/>
-                     <label for="PS4">
-                         <span class="filter-tag">
-                             <span class="PS4-checked">+</span>
-                             PS4
-                        </span>
-                     </label>
+                        <input type="checkbox" id="{{platform.slug}}" name="{{platform.slug}}" class="filter-checkbox"
+                               {% if platform.id in checked_platforms_ids %}checked{%endif%}/>
+
+                        <label for="{{platform.slug}}">
+                            <span class="filter-tag">
+                                <span class="{{platform.slug}}-checked">+</span>
+                                     {{platform.slug}}
+                            </span>
+                        </label>
+
+                        <style>
+                            .{{platform.slug}}-checked {
+                                display: none;
+                            }
+
+                            #{{platform.slug}}:checked + label .filter-tag .{{platform.slug}}-checked {
+                                display: inline;
+                            }
+                        </style>
+
+                     {% endfor %}
+
                 </div>
 
                 <h5 class="side-subtitle">Genres</h5>
