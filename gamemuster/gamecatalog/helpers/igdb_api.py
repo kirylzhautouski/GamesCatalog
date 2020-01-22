@@ -89,21 +89,32 @@ class IGDB_API:
         filters = 'where ' + conditions[0]
 
         for i in range(1, len(conditions)):
-            filters += f" & {conditions[i]}"
+            filters += f' & {conditions[i]}'
 
         return filters + ';'
 
     @classmethod
-    def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None):
+    def __build_search_query(cls, search_query):
+        if search_query:
+            return f'search "{search_query}";'
+
+        return 'sort popularity desc;'
+
+    @classmethod
+    def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None,
+                      search_query=None):
         # Use args to filter games
 
-        games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,genres,keywords; sort popularity desc;\
-        limit {games_count}; ' + cls.__build_filters(platform_ids, genre_ids, user_rating_range))
+        games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,genres,keywords; limit {games_count}; ' +
+                                        cls.__build_filters(platform_ids, genre_ids, user_rating_range) +
+                                        cls.__build_search_query(search_query))
 
         # Load cover, genres, keywords from their ids
 
         cover_ids = tuple((game_info['cover'] for game_info in games_info if 'cover' in game_info))
-        covers_for_games = cls.get_covers(cover_ids)
+
+        if len(cover_ids):
+            covers_for_games = cls.get_covers(cover_ids)
 
         genre_ids = set()
         for game_info in games_info:
@@ -115,7 +126,8 @@ class IGDB_API:
 
                 genre_ids.update(genre_ids_for_game)
 
-        genres = cls.get_resources_at_url(cls.GENRES_URL, cls.GENRES_COLUMN_NAME, genre_ids)
+        if len(genre_ids):
+            genres = cls.get_resources_at_url(cls.GENRES_URL, cls.GENRES_COLUMN_NAME, genre_ids)
 
         keyword_ids = set()
         for game_info in games_info:
@@ -128,7 +140,8 @@ class IGDB_API:
 
                 keyword_ids.update(keyword_ids_for_game)
 
-        keywords = cls.get_resources_at_url(cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME, keyword_ids)
+        if len(keyword_ids):
+            keywords = cls.get_resources_at_url(cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME, keyword_ids)
 
         for game_info in games_info:
             if game_info['id'] in covers_for_games:
@@ -233,7 +246,7 @@ class IGDB_API:
 
 
 if __name__ == "__main__":
-    games = IGDB_API.get_all_games(games_count=18)
+    games = IGDB_API.get_all_games(games_count=18, search_query="Fifa")
     print(games)
 
     most_popular_game = games[0]

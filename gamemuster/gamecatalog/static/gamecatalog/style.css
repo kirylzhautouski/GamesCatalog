@@ -287,6 +287,9 @@ p.game-genre {
 
 div.game-tags {
     margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 5px;
 }
 
 span.game-tag {
@@ -299,6 +302,7 @@ span.game-tag {
     padding-right: 4px;
     padding-left: 4px;
     margin-left: 2px;
+    display: inline-block;
     border-radius: 80px;
     margin-right: 6px;
 }

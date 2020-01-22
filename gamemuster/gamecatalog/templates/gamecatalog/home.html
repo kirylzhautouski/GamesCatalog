@@ -103,9 +103,9 @@
 
     <div class="games-container">
         <div class="search-bar">
-            <form>
+            <form action="{% url 'gamecatalog:index' %}" method="get">
                 <div class="search">
-                    <input type="search" placeholder="Search...">
+                    <input type="search" placeholder="Search..." name="search" value="{{ search_query }}">
                     <input type="submit" value="">
                 </div>
             </form>
@@ -157,7 +157,7 @@
             {% for i in '123'|make_list %}
 
                 <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
-                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}">
+                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}{% if search_query.strip %}&search={{ search_query }}{% endif %}">
                     {{ forloop.counter }}
                 </a>
 
