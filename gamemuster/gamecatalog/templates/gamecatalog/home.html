@@ -23,6 +23,9 @@
 {% endblock scripts %}
 
 {% block content %}
+
+{% load static %}
+
 <div>
 
     <input type="checkbox" id="side-checkbox" />
@@ -109,114 +112,41 @@
         </div>
 
         <div class="container games">
-            <div class="row">
-                <div class="col-sm text-center">
-                    <div class="game-card">
-                        <div class="game-info">
-                            <h1 class="game-name">PACMAN</h1>
-                            <p class="game-genre">arcade oldschool</p>
 
-                            <div class="game-tags">
-                                <span class="game-tag">
-                                    Open
-                                </span>
-                                <span class="game-tag">
-                                    MUST
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm text-center">
-                  <div class="game-card">
-                        <div class="game-info">
-                            <h1 class="game-name">PACMAN</h1>
-                            <p class="game-genre">arcade oldschool</p>
+                {% for game in games|slice:":6" %}
 
-                            <div class="game-tags">
-                                <span class="game-tag">
-                                    Open
-                                </span>
-                                <span class="game-tag">
-                                    MUST
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm text-center">
-                  <div class="game-card">
-                        <div class="game-info">
-                            <h1 class="game-name">PACMAN</h1>
-                            <p class="game-genre">arcade oldschool</p>
+                    {% ifequal forloop.counter0|divisibleby:"3" True %}
+                        <div class="row top-buffer">
+                    {% endifequal %}
 
-                            <div class="game-tags">
-                                <span class="game-tag">
-                                    Open
-                                </span>
-                                <span class="game-tag">
-                                    MUST
-                                </span>
+                        <div class="col-sm text-center">
+                            <a href="{% url 'gamecatalog:details' game.id %}">
+                                <div class="game-card" style="background-image: url(https://{{ game.cover }})">
+
+                                <div class="game-info">
+                                    <h1 class="game-name">{{ game.name }}</h1>
+                                    <p class="game-genre">{{ game.genres|join:" " }}</p>
+
+                                    <div class="game-tags">
+
+                                        {% for keyword in game.keywords %}
+                                            <span class="game-tag">
+                                                {{ keyword }}
+                                            </span>
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
                             </div>
+                            </a>
+
                         </div>
-                    </div>
-                </div>
+
+                    {% ifequal forloop.counter0|add:"1"|divisibleby:"3" True %}
+                        </div>
+                    {% endifequal %}
+                {% endfor %}
             </div>
-
-             <div class="row top-buffer">
-                <div class="col-sm text-center">
-                    <div class="game-card">
-                        <div class="game-info">
-                            <h1 class="game-name">PACMAN</h1>
-                            <p class="game-genre">arcade oldschool</p>
-
-                            <div class="game-tags">
-                                <span class="game-tag">
-                                    Open
-                                </span>
-                                <span class="game-tag">
-                                    MUST
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm text-center">
-                  <div class="game-card">
-                        <div class="game-info">
-                            <h1 class="game-name">PACMAN</h1>
-                            <p class="game-genre">arcade oldschool</p>
-
-                            <div class="game-tags">
-                                <span class="game-tag">
-                                    Open
-                                </span>
-                                <span class="game-tag">
-                                    MUST
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm text-center">
-                  <div class="game-card">
-                        <div class="game-info">
-                            <h1 class="game-name">PACMAN</h1>
-                            <p class="game-genre">arcade oldschool</p>
-
-                            <div class="game-tags">
-                                <span class="game-tag">
-                                    Open
-                                </span>
-                                <span class="game-tag">
-                                    MUST
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="pages">
             <button class="page-button current">

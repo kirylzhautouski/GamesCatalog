@@ -3,6 +3,8 @@ import os
 
 import requests
 
+from django.conf import settings
+
 
 def list_values_comma_separated(values):
     return str(values)[1:-1]
@@ -14,6 +16,10 @@ class InvalidGameIDError(Exception):
 
 class InvalidCoverIDError(Exception):
     pass
+
+
+if not settings.configured:
+    settings.configure()
 
 
 # noinspection PyPep8Naming
@@ -30,11 +36,14 @@ class IGDB_API:
 
     KEYWORDS_COLUMN_NAME = 'slug'
     GENRES_COLUMN_NAME = 'slug'
-    PLATFORMS_COLUMN_NAME = 'slug'
+    PLATFORMS_COLUMN_NAME = 'name'
     RELEASE_DATES_COLUMN_NAME = 'human'
     SCREENSHOTS_COLUMN_NAME = 'url'
 
-    HEADERS = {'user-key': os.getenv('IGDB_API_KEY')}
+    HEADERS = {'user-key': settings.IGDB_API_KEY}
+
+    MAX_GENRES_FOR_GAME_IN_LIST = 2
+    MAX_KEYWORDS_FOR_GAME_IN_LIST = 2
 
     MAX_GENRES_FOR_GAME = 3
     MAX_KEYWORDS_FOR_GAME = 3
@@ -88,6 +97,8 @@ class IGDB_API:
     def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None):
         # Use args to filter games
 
+        print(cls.HEADERS)
+
         games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,genres,keywords; sort popularity desc;\
         limit {games_count}; ' + cls.__build_filters(platform_ids, genre_ids, user_rating_range))
 
@@ -101,7 +112,7 @@ class IGDB_API:
             genre_ids_for_game = game_info.get('genres')
 
             if genre_ids_for_game is not None:
-                genre_ids_for_game = genre_ids_for_game[0:min(len(genre_ids_for_game), cls.MAX_GENRES_FOR_GAME)]
+                genre_ids_for_game = genre_ids_for_game[0:min(len(genre_ids_for_game), cls.MAX_GENRES_FOR_GAME_IN_LIST)]
                 game_info['genres'] = genre_ids_for_game
 
                 genre_ids.update(genre_ids_for_game)
@@ -113,7 +124,7 @@ class IGDB_API:
             keyword_ids_for_game = game_info.get('keywords')
 
             if keyword_ids_for_game is not None:
-                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game), cls.MAX_KEYWORDS_FOR_GAME)]
+                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game), cls.MAX_KEYWORDS_FOR_GAME_IN_LIST)]
                 game_info['keywords'] = keyword_ids_for_game
 
                 keyword_ids.update(keyword_ids_for_game)
@@ -148,7 +159,7 @@ class IGDB_API:
     @classmethod
     def get_game(cls, game_id):
 
-        game_info = cls.__make_request(cls.GAMES_URL, f'fields name, keywords, genres, summary,\
+        game_info = cls.__make_request(cls.GAMES_URL, f'fields name, platforms, keywords, genres, summary,\
         release_dates, screenshots, rating, rating_count, aggregated_rating, aggregated_rating_count;\
         where id = {game_id};')
 
@@ -158,9 +169,15 @@ class IGDB_API:
         game_info = game_info[0]
 
         genre_ids = game_info.get('genres')
+
+        if genre_ids:
+            del genre_ids[min(len(genre_ids), cls.MAX_GENRES_FOR_GAME):]
         cls.__map_ids_to_names(genre_ids, cls.GENRES_URL, cls.GENRES_COLUMN_NAME)
 
         keyword_ids = game_info.get('keywords')
+
+        if keyword_ids:
+            del keyword_ids[min(len(keyword_ids), cls.MAX_KEYWORDS_FOR_GAME):]
         cls.__map_ids_to_names(keyword_ids, cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME)
 
         release_date_ids = game_info.get('release_dates')
@@ -168,6 +185,18 @@ class IGDB_API:
 
         screenshots_ids = game_info.get('screenshots')
         cls.__map_ids_to_names(screenshots_ids, cls.SCREENSHOTS_URL, cls.SCREENSHOTS_COLUMN_NAME)
+
+        platform_ids = game_info.get('platforms')
+        cls.__map_ids_to_names(platform_ids, cls.PLATFORMS_URL, cls.PLATFORMS_COLUMN_NAME)
+
+        if screenshots_ids:
+            game_info['screenshots'] = list(map(lambda s: s[2:], screenshots_ids))
+
+        if 'rating' in game_info:
+            game_info['rating'] = round(game_info['rating'] / 10, 2)
+
+        if 'aggregated_rating' in game_info:
+            game_info['aggregated_rating'] = round(game_info['aggregated_rating'] / 10, 2)
 
         return game_info
 
@@ -185,7 +214,7 @@ class IGDB_API:
         if not len(covers_info):
             raise InvalidCoverIDError()
 
-        return {cover_info['game']: cover_info['url'] for cover_info in covers_info}
+        return {cover_info['game']: cover_info['url'][2:] for cover_info in covers_info}
 
     @classmethod
     def get_resources_at_url(cls, url, column_name, ids):
@@ -202,7 +231,7 @@ class IGDB_API:
 
 
 if __name__ == "__main__":
-    games = IGDB_API.get_all_games(platform_ids=[4], genre_ids=[13], user_rating_range=(5, 10))
+    games = IGDB_API.get_all_games()
     print(games)
 
     most_popular_game = games[0]
@@ -211,3 +240,6 @@ if __name__ == "__main__":
     print(IGDB_API.get_all_resources_at_url(IGDB_API.PLATFORMS_URL, IGDB_API.PLATFORMS_COLUMN_NAME))
 
     print(IGDB_API.get_game(9912))
+
+    print()
+    print(IGDB_API.get_game(113344))

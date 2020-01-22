@@ -244,20 +244,27 @@ div.games {
     margin-top: 30px;
 }
 
+a.game-card-link {
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+}
+
 div.game-card {
     width: 200px;
     height: 200px;
-    background-image: url(images/card_background.jpg);
     margin: auto;
     position: relative;
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
 
 div.game-info {
     text-align: left;
     padding-left: 10px;
     background: rgba(0, 0, 0, 0.7);
-    height: 46%;
-    padding-bottom: 4px;
+    height: 50%;
+    padding-bottom: 14px;
     width: 100%;
     bottom: 0;
     position: absolute;
@@ -265,6 +272,7 @@ div.game-info {
 
 h1.game-name {
     color: white;
+    font-size: 18px;
     font-weight: 600;
     margin-top: 3px;
     margin-bottom: 0;
