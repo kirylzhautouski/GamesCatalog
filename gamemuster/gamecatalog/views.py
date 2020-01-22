@@ -13,7 +13,11 @@ class IndexView(generic.ListView):
         super().__init__()
 
         self.current_page = 1
+
         self.search_query = ''
+
+        self.rating_from = None
+        self.rating_to = None
 
     def dispatch(self, request, *args, **kwargs):
 
@@ -29,11 +33,18 @@ class IndexView(generic.ListView):
         if 'search' in self.request.GET:
             self.search_query = self.request.GET['search']
 
+        if 'rating_from' in self.request.GET:
+            self.rating_from = int(self.request.GET['rating_from'])
+
+        if 'rating_to' in self.request.GET:
+            self.rating_to = int(self.request.GET['rating_to'])
+
         return super().dispatch(request, args, kwargs)
 
     def get_queryset(self):
         games = igdb_api.IGDB_API.get_all_games(games_count=18, search_query=(self.search_query
-                                                                              if self.search_query != '' else None))
+                                                                              if self.search_query != '' else None),
+                                                user_rating_range=(self.rating_from, self.rating_to))
 
         return games[(self.current_page - 1) * 6: (self.current_page - 1) * 6 + 6]
 
@@ -41,7 +52,14 @@ class IndexView(generic.ListView):
         context = super(IndexView, self).get_context_data(**kwargs)
 
         context['current_page'] = self.current_page
+
         context['search_query'] = self.search_query
+
+        if self.rating_from:
+            context['rating_from'] = self.rating_from
+
+        if self.rating_to:
+            context['rating_to'] = self.rating_to
 
         return context
 

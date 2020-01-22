@@ -61,7 +61,9 @@ class IGDB_API:
     def __validate_filters(cls, platform_ids, genre_ids, user_rating_range):
         if (not platform_ids or (platform_ids and not len(platform_ids))) \
                 and (not genre_ids or (genre_ids and not len(genre_ids))) \
-                and (not user_rating_range or (user_rating_range and len(user_rating_range) != 2)):
+                and (not user_rating_range or (user_rating_range and len(user_rating_range) != 2)
+                     or (user_rating_range and len(user_rating_range) == 2 and user_rating_range[0] is None
+                         and user_rating_range[1] is None)):
             return False
 
         return True
@@ -80,7 +82,8 @@ class IGDB_API:
         if genre_ids and len(genre_ids):
             conditions.append(f'genres = ({list_values_comma_separated(genre_ids)})')
 
-        if user_rating_range:
+        if user_rating_range and len(user_rating_range) == 2 and user_rating_range[0] is not None \
+                and user_rating_range[1] is not None:
             lo = user_rating_range[0] * 10
             hi = user_rating_range[1] * 10
 

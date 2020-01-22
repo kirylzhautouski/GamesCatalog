@@ -107,7 +107,9 @@ span.filter-tag {
 .rating-range {
     border: 0;
     color: white;
+    display: inline;
     background-color: #E23232;
+    width: 18px;
     font-weight: bold;
 }
 

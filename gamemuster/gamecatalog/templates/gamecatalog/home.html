@@ -10,13 +10,16 @@
               range: true,
               min: 0,
               max: 10,
-              values: [ 2, 10 ],
+              values: [ {% if rating_from %} {{ rating_from }} {% else %}2{% endif %}, {% if rating_to %} {{ rating_to }} {% else %}10{% endif %} ],
               slide: function( event, ui ) {
-                $( "#amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                $( "#rating_from" ).val( ui.values[ 0 ] );
+                $( "#rating_to" ).val( ui.values[ 1 ] );
               }
             });
-            $( "#amount" ).val( $( "#slider-range" ).slider( "values", 0 ) +
-              " - " + $( "#slider-range" ).slider( "values", 1 ) );
+
+            $( "#rating_from" ).val( $( "#slider-range" ).slider( "values", 0 ) );
+
+            $( "#rating_to" ).val( $( "#slider-range" ).slider( "values", 1 ) );
           } );
 </script>
 
@@ -38,7 +41,10 @@
 
         <hr>
 
-        <form>
+        <form action="{% url 'gamecatalog:index' %}"
+              method="get">
+
+            <input name="search" style="display:none;" value="{{ search_query }}"/>
 
             <div class="filters">
                 <h5 class="side-subtitle">Platforms</h5>
@@ -84,7 +90,8 @@
                 <br>
 
                 <p>
-                  <input type="text" class="rating-range" id="amount" readonly>
+                    <input type="text" class="rating-range" id="rating_from" name="rating_from" readonly> -
+                    <input type="text" class="rating-range" id="rating_to" name="rating_to" readonly>
                 </p>
 
                 <div id="slider-range"></div>
@@ -157,7 +164,7 @@
             {% for i in '123'|make_list %}
 
                 <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
-                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}{% if search_query.strip %}&search={{ search_query }}{% endif %}">
+                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}{% if search_query.strip %}&search={{ search_query }}{% endif %}{% if rating_from %}&rating_from={{ rating_from }}{% endif %}{% if rating_to %}&rating_to={{ rating_to }}{% endif %}">
                     {{ forloop.counter }}
                 </a>
 
