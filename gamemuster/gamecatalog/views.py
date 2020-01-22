@@ -29,6 +29,8 @@ class IndexView(generic.ListView):
 
         self.checked_genres_ids = None
 
+        self.filter_params = ''
+
     def dispatch(self, request, *args, **kwargs):
 
         try:
@@ -43,17 +45,25 @@ class IndexView(generic.ListView):
         if 'search' in self.request.GET:
             self.search_query = self.request.GET['search']
 
+            self.filter_params += f'&search={self.search_query}'
+
         if 'rating_from' in self.request.GET:
             self.rating_from = int(self.request.GET['rating_from'])
 
+            self.filter_params += f'&rating_from={self.rating_from}'
+
         if 'rating_to' in self.request.GET:
             self.rating_to = int(self.request.GET['rating_to'])
+
+            self.filter_params += f'&rating_to={self.rating_to}'
 
         self.checked_platforms_ids = list()
         for get_param in self.request.GET:
             for platform in self.platforms:
                 if platform[igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME] == get_param:
                     self.checked_platforms_ids.append(platform['id'])
+
+                    self.filter_params += f'&{get_param}=on'
 
         return super().dispatch(request, args, kwargs)
 
@@ -80,6 +90,8 @@ class IndexView(generic.ListView):
 
         context['platforms'] = self.platforms
         context['checked_platforms_ids'] = self.checked_platforms_ids
+
+        context['filter_params'] = self.filter_params
 
         return context
 
