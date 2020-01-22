@@ -24,6 +24,11 @@ class IndexView(generic.ListView):
 
         self.checked_platforms_ids = None
 
+        self.genres = igdb_api.IGDB_API.get_all_resources_at_url(igdb_api.IGDB_API.GENRES_URL,
+                                                                 igdb_api.IGDB_API.GENRES_COLUMN_NAME)
+
+        self.checked_genres_ids = None
+
     def dispatch(self, request, *args, **kwargs):
 
         try:
@@ -67,10 +72,10 @@ class IndexView(generic.ListView):
 
         context['search_query'] = self.search_query
 
-        if self.rating_from:
+        if self.rating_from is not None:
             context['rating_from'] = self.rating_from
 
-        if self.rating_to:
+        if self.rating_to is not None:
             context['rating_to'] = self.rating_to
 
         context['platforms'] = self.platforms

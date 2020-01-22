@@ -173,7 +173,7 @@
             {% for i in '123'|make_list %}
 
                 <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
-                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}{% if search_query.strip %}&search={{ search_query }}{% endif %}{% if rating_from %}&rating_from={{ rating_from }}{% endif %}{% if rating_to %}&rating_to={{ rating_to }}{% endif %}">
+                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}{% if search_query.strip %}&search={{ search_query }}{% endif %}{% if rating_from != None %}&rating_from={{ rating_from }}{% endif %}{% if rating_to != None %}&rating_to={{ rating_to }}{% endif %}">
                     {{ forloop.counter }}
                 </a>
 
