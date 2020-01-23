@@ -2,7 +2,9 @@ from django.http import Http404
 from django.shortcuts import render
 from django.views import generic
 
-from .helpers import igdb_api
+from requests import HTTPError
+
+from .helpers import igdb_api, twitter_api
 
 
 class IndexView(generic.ListView):
@@ -20,12 +22,19 @@ class DetailsView(generic.TemplateView):
         super().__init__()
 
         self.game = {}
+        self.tweets = []
 
     def dispatch(self, request, *args, **kwargs):
         try:
             self.game = igdb_api.IGDB_API.get_game(kwargs['game_id'])
+
         except igdb_api.InvalidGameIDError:
             raise Http404()
+
+        try:
+            self.tweets = twitter_api.TWITTER_API.get_tweets_for_game(self.game['name'])
+        except HTTPError:
+            pass
 
         return super().dispatch(request, args, kwargs)
 
@@ -33,6 +42,7 @@ class DetailsView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
 
         context['game'] = self.game
+        context['tweets'] = self.tweets
 
         return context
 

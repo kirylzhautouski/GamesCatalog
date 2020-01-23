@@ -122,3 +122,5 @@ STATIC_URL = '/static/'
 
 
 IGDB_API_KEY = os.getenv('IGDB_API_KEY')
+
+TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')

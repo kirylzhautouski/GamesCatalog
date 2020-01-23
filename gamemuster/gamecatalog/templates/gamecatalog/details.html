@@ -144,88 +144,28 @@
             <div class="col-3 details-column">
 
                 <h1 class="details-name">
-                    #Pacman Tweets
+                    #{{game.name}} Tweets
                 </h1>
 
-                <div class="tweet-card">
+                {% for tweet in tweets %}
 
-                    <p class="tweet-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
-                    </p>
+                    <div class="tweet-card">
 
-                    <span class="tweet-date">
-                        15.03.2018 20:20
-                    </span>
+                        <p class="tweet-text">
+                            {{ tweet.text }}
+                        </p>
 
-                    <span class="tweet-author">
-                        @tweet_author
-                    </span>
+                        <span class="tweet-date">
+                            {{ tweet.created_at }}
+                        </span>
 
-                </div>
+                        <span class="tweet-author">
+                            @{{ tweet.user_name }}
+                        </span>
 
-                <div class="tweet-card">
+                    </div>
 
-                    <p class="tweet-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
-                    </p>
-
-                    <span class="tweet-date">
-                        15.03.2018 20:20
-                    </span>
-
-                    <span class="tweet-author">
-                        @tweet_author
-                    </span>
-
-                </div>
-
-                <div class="tweet-card">
-
-                    <p class="tweet-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
-                    </p>
-
-                    <span class="tweet-date">
-                        15.03.2018 20:20
-                    </span>
-
-                    <span class="tweet-author">
-                        @tweet_author
-                    </span>
-
-                </div>
-
-                <div class="tweet-card">
-
-                    <p class="tweet-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
-                    </p>
-
-                    <span class="tweet-date">
-                        15.03.2018 20:20
-                    </span>
-
-                    <span class="tweet-author">
-                        @tweet_author
-                    </span>
-
-                </div>
-
-                <div class="tweet-card">
-
-                    <p class="tweet-text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, aut consectetur consequuntur culpa deleniti eius est laborum modi nam nulla odio, officiis praesentium provident quo sunt suscipit tempora veniam voluptates?
-                    </p>
-
-                    <span class="tweet-date">
-                        15.03.2018 20:20
-                    </span>
-
-                    <span class="tweet-author">
-                        @tweet_author
-                    </span>
-
-                </div>
+                {% endfor %}
 
             </div>
 
