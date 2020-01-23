@@ -1,6 +1,3 @@
-import json
-import os
-
 import requests
 
 from django.conf import settings
@@ -55,7 +52,7 @@ class IGDB_API:
         if r.status_code != 200:
             r.raise_for_status()
 
-        return json.loads(r.text)
+        return r.json()
 
     @classmethod
     def __validate_filters(cls, platform_ids, genre_ids, user_rating_range):

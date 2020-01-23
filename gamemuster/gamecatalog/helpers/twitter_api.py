@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 from django.conf import settings
@@ -20,16 +18,16 @@ class TWITTER_API:
         if r.status_code != 200:
             r.raise_for_status()
 
-        json_result = json.loads(r.text)
+        json_result = r.json()
         statuses = json_result['statuses'][:tweets_count]
 
         tweets = list()
         for status in statuses:
-            tweet = dict()
-
-            tweet['text'] = status['text']
-            tweet['created_at'] = status['created_at']
-            tweet['user_name'] = status['user']['screen_name']
+            tweet = {
+                'text': status['text'],
+                'created_at': status['created_at'],
+                'user_name': status['user']['screen_name']
+            }
 
             tweets.append(tweet)
 
