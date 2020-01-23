@@ -117,7 +117,7 @@ class IGDB_API:
 
         cover_ids = tuple((game_info['cover'] for game_info in games_info if 'cover' in game_info))
 
-        if len(cover_ids):
+        if cover_ids:
             covers_for_games = cls.get_covers(cover_ids)
 
         genre_ids = set()
@@ -130,7 +130,7 @@ class IGDB_API:
 
                 genre_ids.update(genre_ids_for_game)
 
-        if len(genre_ids):
+        if genre_ids:
             genres = cls.get_resources_at_url(cls.GENRES_URL, cls.GENRES_COLUMN_NAME, genre_ids)
 
         keyword_ids = set()
@@ -144,7 +144,7 @@ class IGDB_API:
 
                 keyword_ids.update(keyword_ids_for_game)
 
-        if len(keyword_ids):
+        if keyword_ids:
             keywords = cls.get_resources_at_url(cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME, keyword_ids)
 
         for game_info in games_info:
