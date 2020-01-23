@@ -1,5 +1,4 @@
 from django.http import Http404
-from django.shortcuts import render
 from django.views import generic
 
 from requests import HTTPError
@@ -21,13 +20,15 @@ class IndexView(generic.ListView):
         self.rating_from = None
         self.rating_to = None
 
-        self.platforms = igdb_api.IGDB_API.get_all_resources_at_url(igdb_api.IGDB_API.PLATFORMS_URL,
-                                                                    igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
+        self.platforms = igdb_api.IGDB_API.get_all_resources_at_url(
+            igdb_api.IGDB_API.PLATFORMS_URL,
+            igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
 
         self.checked_platforms_ids = None
 
-        self.genres = igdb_api.IGDB_API.get_all_resources_at_url(igdb_api.IGDB_API.GENRES_URL,
-                                                                 igdb_api.IGDB_API.GENRES_COLUMN_NAME)
+        self.genres = igdb_api.IGDB_API.get_all_resources_at_url(
+            igdb_api.IGDB_API.GENRES_URL,
+            igdb_api.IGDB_API.GENRES_COLUMN_NAME)
 
         self.checked_genres_ids = None
 
@@ -59,11 +60,11 @@ class IndexView(generic.ListView):
 
             self.filter_params += f'&rating_to={self.rating_to}'
 
-        self.checked_platforms_ids = self.__handle_get_filter_params(self.platforms,
-                                                                     igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
+        self.checked_platforms_ids = self.__handle_get_filter_params(
+            self.platforms, igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
 
-        self.checked_genres_ids = self.__handle_get_filter_params(self.genres,
-                                                                  igdb_api.IGDB_API.GENRES_COLUMN_NAME)
+        self.checked_genres_ids = self.__handle_get_filter_params(
+            self.genres, igdb_api.IGDB_API.GENRES_COLUMN_NAME)
 
         return super().dispatch(request, args, kwargs)
 
@@ -79,13 +80,16 @@ class IndexView(generic.ListView):
         return params
 
     def get_queryset(self):
-        games = igdb_api.IGDB_API.get_all_games(games_count=18,
-                                                search_query=(self.search_query if self.search_query != '' else None),
-                                                user_rating_range=(self.rating_from, self.rating_to),
-                                                platform_ids=self.checked_platforms_ids,
-                                                genre_ids=self.checked_genres_ids)
+        games = igdb_api.IGDB_API.get_all_games(
+            games_count=18,
+            search_query=(self.search_query
+                          if self.search_query != '' else None),
+            user_rating_range=(self.rating_from, self.rating_to),
+            platform_ids=self.checked_platforms_ids,
+            genre_ids=self.checked_genres_ids)
 
-        return games[(self.current_page - 1) * 6: (self.current_page - 1) * 6 + 6]
+        return games[(self.current_page - 1) * 6:
+                     (self.current_page - 1) * 6 + 6]
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
@@ -128,7 +132,8 @@ class DetailsView(generic.TemplateView):
             raise Http404()
 
         try:
-            self.tweets = twitter_api.TWITTER_API.get_tweets_for_game(self.game['name'])
+            self.tweets = twitter_api.TWITTER_API.get_tweets_for_game(
+                self.game['name'])
         except HTTPError:
             pass
 
@@ -141,5 +146,3 @@ class DetailsView(generic.TemplateView):
         context['tweets'] = self.tweets
 
         return context
-
-
