@@ -84,14 +84,29 @@
                 <hr class="subtitle-line">
 
                 <div class="genre-filters">
-                    <input type="checkbox" id="Platformer" class="filter-checkbox"/>
+                     {% for genre in genres %}
 
-                    <label for="Platformer">
-                        <span class="filter-tag">
-                            <span class="Platformer-checked">+</span>
-                            Platformer
-                        </span>
-                    </label>
+                        <input type="checkbox" id="{{genre.slug}}" name="{{genre.slug}}" class="filter-checkbox"
+                               {% if genre.id in checked_genres_ids %}checked{%endif%}/>
+
+                        <label for="{{genre.slug}}">
+                            <span class="filter-tag">
+                                <span class="{{genre.slug}}-checked">+</span>
+                                     {{genre.slug}}
+                            </span>
+                        </label>
+
+                        <style>
+                            .{{genre.slug}}-checked {
+                                display: none;
+                            }
+
+                            #{{genre.slug}}:checked + label .filter-tag .{{genre.slug}}-checked {
+                                display: inline;
+                            }
+                        </style>
+
+                     {% endfor %}
                 </div>
 
                 <h5 class="side-subtitle">User rating</h5>

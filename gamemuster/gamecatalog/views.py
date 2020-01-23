@@ -57,21 +57,31 @@ class IndexView(generic.ListView):
 
             self.filter_params += f'&rating_to={self.rating_to}'
 
-        self.checked_platforms_ids = list()
+        self.checked_platforms_ids = self.__handle_get_filter_params(self.platforms,
+                                                                     igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
+
+        self.checked_genres_ids = self.__handle_get_filter_params(self.genres,
+                                                                  igdb_api.IGDB_API.GENRES_COLUMN_NAME)
+
+        return super().dispatch(request, args, kwargs)
+
+    def __handle_get_filter_params(self, possible_params, name_key):
+        params = set()
         for get_param in self.request.GET:
-            for platform in self.platforms:
-                if platform[igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME] == get_param:
-                    self.checked_platforms_ids.append(platform['id'])
+            for possible_param in possible_params:
+                if possible_param[name_key] == get_param:
+                    params.add(possible_param['id'])
 
                     self.filter_params += f'&{get_param}=on'
 
-        return super().dispatch(request, args, kwargs)
+        return params
 
     def get_queryset(self):
         games = igdb_api.IGDB_API.get_all_games(games_count=18,
                                                 search_query=(self.search_query if self.search_query != '' else None),
                                                 user_rating_range=(self.rating_from, self.rating_to),
-                                                platform_ids=self.checked_platforms_ids)
+                                                platform_ids=self.checked_platforms_ids,
+                                                genre_ids=self.checked_genres_ids)
 
         return games[(self.current_page - 1) * 6: (self.current_page - 1) * 6 + 6]
 
@@ -90,6 +100,9 @@ class IndexView(generic.ListView):
 
         context['platforms'] = self.platforms
         context['checked_platforms_ids'] = self.checked_platforms_ids
+
+        context['genres'] = self.genres
+        context['checked_genres_ids'] = self.checked_genres_ids
 
         context['filter_params'] = self.filter_params
 
