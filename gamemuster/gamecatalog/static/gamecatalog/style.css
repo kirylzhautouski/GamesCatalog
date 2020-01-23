@@ -92,14 +92,6 @@ span.filter-tag {
     display: none;
 }
 
-#PC:checked + label .filter-tag .PC-checked {
-    display: none;
-}
-
-#PS4:checked + label .filter-tag .PS4-checked {
-    display: none;
-}
-
 #Platformer:checked + label .filter-tag .Platformer-checked {
     display: none;
 }
@@ -107,7 +99,9 @@ span.filter-tag {
 .rating-range {
     border: 0;
     color: white;
+    display: inline;
     background-color: #E23232;
+    width: 18px;
     font-weight: bold;
 }
 
@@ -282,10 +276,14 @@ p.game-genre {
     color: white;
     font-weight: 600;
     margin-bottom: 0;
+    white-space: nowrap;
 }
 
 div.game-tags {
     margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 5px;
 }
 
 span.game-tag {
@@ -298,6 +296,7 @@ span.game-tag {
     padding-right: 4px;
     padding-left: 4px;
     margin-left: 2px;
+    display: inline-block;
     border-radius: 80px;
     margin-right: 6px;
 }
@@ -310,13 +309,14 @@ div.pages {
     margin-top: 50px;
 }
 
-button.page-button {
+a.page-button {
     width: 30px;
     height: 30px;
     background-color: #E23232;
     box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
     color: white;
     border: none;
+    display: inline-block;
     outline: none;
     font-size: 20px;
     font-weight: 600;
@@ -325,6 +325,6 @@ button.page-button {
     margin-top: 10px;
 }
 
-button.current {
+a.current {
     transform: translateY(-6px);
 }

@@ -37,6 +37,7 @@ class IGDB_API:
     KEYWORDS_COLUMN_NAME = 'slug'
     GENRES_COLUMN_NAME = 'slug'
     PLATFORMS_COLUMN_NAME = 'name'
+    PLATFORMS_SLUG_COLUMN_NAME = 'slug'
     RELEASE_DATES_COLUMN_NAME = 'human'
     SCREENSHOTS_COLUMN_NAME = 'url'
 
@@ -61,7 +62,9 @@ class IGDB_API:
     def __validate_filters(cls, platform_ids, genre_ids, user_rating_range):
         if (not platform_ids or (platform_ids and not len(platform_ids))) \
                 and (not genre_ids or (genre_ids and not len(genre_ids))) \
-                and (not user_rating_range or (user_rating_range and len(user_rating_range) != 2)):
+                and (not user_rating_range or (user_rating_range and len(user_rating_range) != 2)
+                     or (user_rating_range and len(user_rating_range) == 2 and user_rating_range[0] is None
+                         and user_rating_range[1] is None)):
             return False
 
         return True
@@ -80,7 +83,8 @@ class IGDB_API:
         if genre_ids and len(genre_ids):
             conditions.append(f'genres = ({list_values_comma_separated(genre_ids)})')
 
-        if user_rating_range:
+        if user_rating_range and len(user_rating_range) == 2 and user_rating_range[0] is not None \
+                and user_rating_range[1] is not None:
             lo = user_rating_range[0] * 10
             hi = user_rating_range[1] * 10
 
@@ -89,23 +93,32 @@ class IGDB_API:
         filters = 'where ' + conditions[0]
 
         for i in range(1, len(conditions)):
-            filters += f" & {conditions[i]}"
+            filters += f' & {conditions[i]}'
 
         return filters + ';'
 
     @classmethod
-    def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None):
+    def __build_search_query(cls, search_query):
+        if search_query:
+            return f'search "{search_query}";'
+
+        return 'sort popularity desc;'
+
+    @classmethod
+    def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None, user_rating_range=None,
+                      search_query=None):
         # Use args to filter games
 
-        print(cls.HEADERS)
-
-        games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,genres,keywords; sort popularity desc;\
-        limit {games_count}; ' + cls.__build_filters(platform_ids, genre_ids, user_rating_range))
+        games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,genres,keywords; limit {games_count}; ' +
+                                        cls.__build_filters(platform_ids, genre_ids, user_rating_range) +
+                                        cls.__build_search_query(search_query))
 
         # Load cover, genres, keywords from their ids
 
-        cover_ids = tuple((game_info['cover'] for game_info in games_info))
-        covers_for_games = cls.get_covers(cover_ids)
+        cover_ids = tuple((game_info['cover'] for game_info in games_info if 'cover' in game_info))
+
+        if cover_ids:
+            covers_for_games = cls.get_covers(cover_ids)
 
         genre_ids = set()
         for game_info in games_info:
@@ -117,22 +130,26 @@ class IGDB_API:
 
                 genre_ids.update(genre_ids_for_game)
 
-        genres = cls.get_resources_at_url(cls.GENRES_URL, cls.GENRES_COLUMN_NAME, genre_ids)
+        if genre_ids:
+            genres = cls.get_resources_at_url(cls.GENRES_URL, cls.GENRES_COLUMN_NAME, genre_ids)
 
         keyword_ids = set()
         for game_info in games_info:
             keyword_ids_for_game = game_info.get('keywords')
 
             if keyword_ids_for_game is not None:
-                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game), cls.MAX_KEYWORDS_FOR_GAME_IN_LIST)]
+                keyword_ids_for_game = keyword_ids_for_game[0:min(len(keyword_ids_for_game),
+                                                                  cls.MAX_KEYWORDS_FOR_GAME_IN_LIST)]
                 game_info['keywords'] = keyword_ids_for_game
 
                 keyword_ids.update(keyword_ids_for_game)
 
-        keywords = cls.get_resources_at_url(cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME, keyword_ids)
+        if keyword_ids:
+            keywords = cls.get_resources_at_url(cls.KEYWORDS_URL, cls.KEYWORDS_COLUMN_NAME, keyword_ids)
 
         for game_info in games_info:
-            game_info['cover'] = covers_for_games[game_info['id']]
+            if game_info['id'] in covers_for_games:
+                game_info['cover'] = covers_for_games[game_info['id']]
 
             genre_ids_for_game = game_info.get('genres')
 
@@ -209,6 +226,8 @@ class IGDB_API:
         else:
             data = f'fields game,url; where id = {cover_ids};'
 
+        data += f'limit {len(cover_ids)};'
+
         covers_info = cls.__make_request(cls.COVERS_URL, data)
 
         if not len(covers_info):
@@ -227,11 +246,11 @@ class IGDB_API:
 
     @classmethod
     def get_all_resources_at_url(cls, url, column_name):
-        return cls.__make_request(url, f"fields id, {column_name}; limit 50;")
+        return cls.__make_request(url, f"fields id, {column_name}; limit 20;")
 
 
 if __name__ == "__main__":
-    games = IGDB_API.get_all_games()
+    games = IGDB_API.get_all_games(games_count=18, search_query="Fifa")
     print(games)
 
     most_popular_game = games[0]
