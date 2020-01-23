@@ -269,6 +269,8 @@ h1.game-name {
     font-size: 18px;
     font-weight: 600;
     margin-top: 3px;
+    height: 45px;
+    overflow: hidden;
     margin-bottom: 0;
 }
 
