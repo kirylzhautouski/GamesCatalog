@@ -146,3 +146,15 @@ class DetailsView(generic.TemplateView):
         context['tweets'] = self.tweets
 
         return context
+
+
+class SignUpView(generic.TemplateView):
+    template_name = 'gamecatalog/sign_up.html'
+
+
+class LogInView(generic.TemplateView):
+    template_name = 'gamecatalog/log_in.html'
+
+
+class ProfileView(generic.TemplateView):
+    template_name = 'gamecatalog/profile.html'
