@@ -5,6 +5,7 @@
 {% block styles %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/auth_header_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/sign_up_style.css' %}">
 
 {% endblock styles %}
 
@@ -15,4 +16,13 @@
 {% endblock header %}
 
 {% block content %}
+
+    <form method="post" class="sign-up-form">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Sign me up!</button>
+    </form>
+
 {% endblock content %}

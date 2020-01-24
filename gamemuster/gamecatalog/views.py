@@ -1,9 +1,11 @@
 from django.http import Http404
+from django.shortcuts import render, redirect
 from django.views import generic
 
 from requests import HTTPError
 
 from .helpers import igdb_api, twitter_api
+from .forms import SignUpForm
 
 
 class IndexView(generic.ListView):
@@ -148,8 +150,21 @@ class DetailsView(generic.TemplateView):
         return context
 
 
-class SignUpView(generic.TemplateView):
-    template_name = 'gamecatalog/sign_up.html'
+def sign_up(request):
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+
+        if form.is_valid():
+            # TODO: validate passwords and User entity if it is unique
+            # and saved
+
+            post = form.save(commit=True)
+            return redirect('gamecatalog:profile')
+
+    else:
+        form = SignUpForm()
+
+    return render(request, 'gamecatalog/sign_up.html', {'form': form})
 
 
 class LogInView(generic.TemplateView):
