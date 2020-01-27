@@ -36,3 +36,16 @@ a.white {
     background-color: white;
     color: #E23232;
 }
+
+.content {
+    margin-left: 50px;
+}
+
+h1.title {
+    font-size: 50px;
+    font-weight: 800;
+}
+
+.text {
+    font-size: 20px;
+}

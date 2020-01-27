@@ -53,7 +53,7 @@ class AuthFormWithPlaceholders(AuthenticationForm):
     )
 
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs=
-                                   {'placeholder': 'Enter password here...'}
-                                   )
+        widget=forms.PasswordInput(
+            attrs={'placeholder': 'Enter password here...'}
+        ),
     )
