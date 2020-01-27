@@ -17,12 +17,34 @@
 
 {% block content %}
 
+    {% load widget_tweaks %}
+
     <form method="post" class="sign-up-form">
         {% csrf_token %}
 
-        {{ form.as_p }}
+        <h1 class="sign-up-name">Sign Up</h1>
 
-        <button type="submit">Sign me up!</button>
+        <div class="container">
+            {% for field in form %}
+
+                <div class="row">
+                    <div class="col-5 text-right sign-up-label">
+                        {{ field.label }}
+                    </div>
+
+                    <div class="col-7 text-left">
+                        {{ field|add_class:"sign-up-input" }}
+
+                        {{ field.errors }}
+                    </div>
+                </div>
+
+                <br>
+
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="sign-up-button">Sign me up!</button>
     </form>
 
 {% endblock content %}

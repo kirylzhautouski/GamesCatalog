@@ -1,5 +1,53 @@
 
+h1.sign-up-name {
+    font-weight: 800;
+    font-size: 30px;
+}
+
 form.sign-up-form {
     text-align: center;
     margin-top: 80px;
+}
+
+button.sign-up-button {
+    box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    background-color: #E23232;
+    color: white;
+    border: none;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.sign-up-label {
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.sign-up-input {
+    width: 300px;
+    border: none;
+    border-bottom: 2px solid black;
+    border-left: 2px solid black;
+    padding-bottom: 5px;
+    padding-left: 3px;
+}
+
+::-webkit-input-placeholder {
+   text-align: left;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   text-align: left;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   text-align: left;
+}
+
+:-ms-input-placeholder {
+   text-align: left;
 }
