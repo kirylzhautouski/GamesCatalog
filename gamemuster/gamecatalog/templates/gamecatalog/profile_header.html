@@ -3,7 +3,7 @@
 {% block header_content %}
     <ul class="profile-header">
         <li class="profile-item">
-            <p class="profile-greeting">Hello <u>Username!</u></p>
+            <p class="profile-greeting">Hello <u>{{ user.username }}!</u></p>
         </li>
 
         <li class="profile-item">
@@ -11,7 +11,7 @@
         </li>
 
         <li class="profile-item">
-            <a href="https://google.com" class="profile-button white">Log out</a>
+            <a href="{% url 'gamecatalog:logout' %}" class="profile-button white">Log out</a>
         </li>
     </ul>
 

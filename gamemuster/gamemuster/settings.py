@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.urls import reverse_lazy
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -135,3 +137,6 @@ TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
 
 
 AUTH_USER_MODEL = 'gamecatalog.User'
+
+LOGIN_REDIRECT_URL = reverse_lazy('gamecatalog:profile')
+LOGOUT_REDIRECT_URL = reverse_lazy('gamecatalog:login')

@@ -2,6 +2,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
+from django.contrib.auth import mixins
 
 from requests import HTTPError
 
@@ -157,9 +158,5 @@ class SignUpView(generic.edit.CreateView):
     template_name = 'gamecatalog/sign_up.html'
 
 
-class LogInView(generic.TemplateView):
-    template_name = 'gamecatalog/log_in.html'
-
-
-class ProfileView(generic.TemplateView):
+class ProfileView(mixins.LoginRequiredMixin, generic.TemplateView):
     template_name = 'gamecatalog/profile.html'
