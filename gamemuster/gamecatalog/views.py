@@ -1,9 +1,11 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views import generic
 
 from requests import HTTPError
 
+from .forms import SignUpForm
 from .helpers import igdb_api, twitter_api
 
 
@@ -149,7 +151,9 @@ class DetailsView(generic.TemplateView):
         return context
 
 
-class SignUpView(generic.TemplateView):
+class SignUpView(generic.edit.CreateView):
+    form_class = SignUpForm
+    success_url = reverse_lazy('gamecatalog:login')
     template_name = 'gamecatalog/sign_up.html'
 
 
