@@ -4,7 +4,7 @@
 
 {% block styles %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/auth_header_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/auth_style.css' %}">
 
 {% endblock styles %}
 
@@ -16,12 +16,34 @@
 
 {% block content %}
 
-    <form method="post" class="sign-up-form">
+     {% load widget_tweaks %}
+
+    <form method="post" class="auth-form">
         {% csrf_token %}
 
-        {{ form.as_p }}
+        <h1 class="auth-name">Log in</h1>
 
-        <button type="submit">Log in</button>
+        <div class="container">
+            {% for field in form %}
+
+                <div class="row">
+                    <div class="col-5 text-right auth-label">
+                        {{ field.label }}
+                    </div>
+
+                    <div class="col-7 text-left">
+                        {{ field|add_class:"auth-input" }}
+
+                        {{ field.errors }}
+                    </div>
+                </div>
+
+                <br>
+
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="auth-button">Log in</button>
     </form>
 
 {% endblock content %}

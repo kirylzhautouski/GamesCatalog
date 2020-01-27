@@ -4,8 +4,7 @@
 
 {% block styles %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/auth_header_style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/sign_up_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/auth_style.css' %}">
 
 {% endblock styles %}
 
@@ -19,21 +18,21 @@
 
     {% load widget_tweaks %}
 
-    <form method="post" class="sign-up-form">
+    <form method="post" class="auth-form">
         {% csrf_token %}
 
-        <h1 class="sign-up-name">Sign Up</h1>
+        <h1 class="auth-name">Sign Up</h1>
 
         <div class="container">
             {% for field in form %}
 
                 <div class="row">
-                    <div class="col-5 text-right sign-up-label">
+                    <div class="col-5 text-right auth-label">
                         {{ field.label }}
                     </div>
 
                     <div class="col-7 text-left">
-                        {{ field|add_class:"sign-up-input" }}
+                        {{ field|add_class:"auth-input" }}
 
                         {{ field.errors }}
                     </div>
@@ -44,7 +43,7 @@
             {% endfor %}
         </div>
 
-        <button type="submit" class="sign-up-button">Sign me up!</button>
+        <button type="submit" class="auth-button">Sign me up!</button>
     </form>
 
 {% endblock content %}

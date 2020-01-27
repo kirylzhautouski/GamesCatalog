@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 from .models import User
 
@@ -44,3 +44,16 @@ class SignUpForm(UserCreationForm):
                 attrs={'placeholder': 'Enter last name here...'}
             ),
         }
+
+
+class AuthFormWithPlaceholders(AuthenticationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Enter username here...'}
+                               )
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs=
+                                   {'placeholder': 'Enter password here...'}
+                                   )
+    )
