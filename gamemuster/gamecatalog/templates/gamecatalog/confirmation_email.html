@@ -1,0 +1,4 @@
+Hi, {{ user.username }}!
+Proceed to the following link to complete your registration:
+
+http://{{ domain }}{% url 'gamecatalog:activate' upkb64=upkb64 token=token %}

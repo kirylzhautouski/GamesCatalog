@@ -1,12 +1,20 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import mixins
+from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from requests import HTTPError
 
 from .forms import SignUpForm
 from .helpers import igdb_api, twitter_api
+from .tokens import account_activation_token_generator
+from .models import User
 
 
 class IndexView(generic.ListView):
@@ -155,6 +163,53 @@ class SignUpView(generic.edit.CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy('gamecatalog:login')
     template_name = 'gamecatalog/sign_up.html'
+
+    def __send_confirmation_mail(self):
+
+        message = render_to_string('gamecatalog/confirmation_email.html', {
+            'user': self.object,
+            'domain': get_current_site(self.request).domain,
+            'upkb64': urlsafe_base64_encode(force_bytes(self.object.pk)),
+            'token': account_activation_token_generator.make_token(self.object),
+        })
+
+        subject = 'GameMuster account registration'
+
+        email_from = settings.EMAIL_HOST_USER
+
+        recipient_list = [self.object.email]
+
+        send_mail(subject, message, email_from, recipient_list)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.is_active = False
+        self.object.save()
+
+        self.__send_confirmation_mail()
+
+        return HttpResponse('Confirm your email address to activate your acccount.')
+
+
+class ActivateView(generic.RedirectView):
+    url = reverse_lazy('gamecatalog:login')
+
+    def get(self, request, *args, **kwargs):
+        try:
+            uid = force_text(urlsafe_base64_decode(kwargs['upkb64']))
+            user = User.objects.get(pk=uid)
+        except Exception:
+            user = None
+
+        token = kwargs['token']
+
+        if user is not None and account_activation_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+
+            return super().get(request, args, kwargs)
+        else:
+            return HttpResponse('Invalid activation link')
 
 
 class ProfileView(mixins.LoginRequiredMixin, generic.TemplateView):
