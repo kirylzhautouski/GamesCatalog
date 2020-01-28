@@ -1,4 +1,4 @@
-{% extends "gamecatalog/base.html" %}
+{% extends "gamecatalog/base/base.html" %}
 
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -24,6 +24,10 @@
 </script>
 
 {% endblock scripts %}
+
+{% block header %}
+    {% include 'gamecatalog/base/base_header.html' %}
+{% endblock header %}
 
 {% block content %}
 
@@ -180,10 +184,6 @@
             </div>
 
         <div class="pages">
-
-            <h1>
-                {{ params }}
-            </h1>
 
             {% for i in '123'|make_list %}
 

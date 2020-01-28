@@ -1,0 +1,49 @@
+{% extends "gamecatalog/base/base.html" %}
+
+{% load static %}
+
+{% block styles %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/auth_style.css' %}">
+
+{% endblock styles %}
+
+{% block header %}
+
+    {% include "gamecatalog/auth_header.html" %}
+
+{% endblock header %}
+
+{% block content %}
+
+    {% load widget_tweaks %}
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        <h1 class="auth-name">Sign Up</h1>
+
+        <div class="container">
+            {% for field in form %}
+
+                <div class="row">
+                    <div class="col-5 text-right auth-label">
+                        {{ field.label }}
+                    </div>
+
+                    <div class="col-7 text-left">
+                        {{ field|add_class:"auth-input" }}
+
+                        {{ field.errors }}
+                    </div>
+                </div>
+
+                <br>
+
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="auth-button">Sign me up!</button>
+    </form>
+
+{% endblock content %}

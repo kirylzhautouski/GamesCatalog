@@ -1,0 +1,30 @@
+{% extends "gamecatalog/base/base.html" %}
+
+{% load static %}
+
+{% block styles %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/profile_style.css' %}">
+
+{% endblock styles %}
+
+{% block header %}
+
+    {% include "gamecatalog/profile_header.html" %}
+
+{% endblock header %}
+
+{% block content %}
+
+    <div class="content">
+        <h1 class="title">My Profile</h1>
+
+        <p class="text">Username <b>| {{ user.username }}</b></p>
+        <p class="text">Email <b>| {{ user.email }}</b></p>
+        <p class="text">First name <b>| {{ user.first_name }}</b></p>
+        <p class="text">Last name <b>| {{ user.last_name }}</b></p>
+        <p class="text">Age <b>| {{ user.get_ages }}</b></p>
+
+    </div>
+
+{% endblock content %}

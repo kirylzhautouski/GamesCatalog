@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    {% include 'gamecatalog/base_styles.html' %}
+    {% include 'gamecatalog/base/base_styles.html' %}
 
     {% block styles %}
     {% endblock styles %}
@@ -13,9 +13,11 @@
 </head>
 
 <body>
-    {% include 'gamecatalog/header.html' %}
 
-    {% block content %}{% endblock content %}`
+    {% block header %}
+    {% endblock header %}
+
+    {% block content %}{% endblock content %}
 </body>
 
 </html>
