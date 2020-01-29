@@ -18,7 +18,7 @@ from requests import HTTPError
 
 from .forms import SignUpForm
 from .helpers import igdb_api, twitter_api
-from .models import User
+from .models import User, GameID
 from .tokens import account_activation_token_generator
 
 
@@ -82,7 +82,7 @@ class IndexView(generic.ListView):
         self.checked_genres_ids = self.__handle_get_filter_params(
             self.genres, igdb_api.IGDB_API.GENRES_COLUMN_NAME)
 
-        return super().dispatch(request, args, kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def __handle_get_filter_params(self, possible_params, name_key):
         params = set()
@@ -158,7 +158,7 @@ class DetailsView(generic.TemplateView):
         except HTTPError:
             pass
 
-        return super().dispatch(request, args, kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         try:
@@ -230,5 +230,16 @@ class ProfileView(mixins.LoginRequiredMixin, generic.TemplateView):
     template_name = 'gamecatalog/profile.html'
 
 
-class FavouritesView(mixins.LoginRequiredMixin, generic.TemplateView):
+class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
     template_name = 'gamecatalog/favs.html'
+    context_object_name = 'games'
+
+    def get_queryset(self):
+        games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.gameid_set.values_list('game_id',
+                                                                                                 flat=True)))
+
+        if games:
+            for game in games:
+                game['users_added'] = len(GameID.objects.all().filter(game_id=game['id']))
+
+        return games
