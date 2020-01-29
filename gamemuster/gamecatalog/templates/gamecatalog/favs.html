@@ -42,5 +42,16 @@
             {% endfor %}
         </div>
 
+        <div class="pages">
+
+            {% for i in '123'|make_list %}
+
+                <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
+                        href="{% url 'gamecatalog:favs' %}?page={{ forloop.counter }}">
+                    {{ forloop.counter }}
+                </a>
+
+            {% endfor %}
+        </div>
     </div>
 {% endblock content %}

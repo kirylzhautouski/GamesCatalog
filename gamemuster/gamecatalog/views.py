@@ -234,12 +234,31 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
     template_name = 'gamecatalog/favs.html'
     context_object_name = 'games'
 
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if 'page' in self.request.GET:
+                self.current_page = int(self.request.GET['page'])
+            else:
+                self.current_page = 1
+        except ValueError:
+            raise Http404()
+
+        if not (1 <= self.current_page <= 3):
+            raise Http404()
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.gameid_set.values_list('game_id',
                                                                                                  flat=True)))
-
         if games:
             for game in games:
                 game['users_added'] = len(GameID.objects.all().filter(game_id=game['id']))
 
-        return games
+        return games[(self.current_page - 1) * 12:
+                     (self.current_page - 1) * 12 + 12]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_page'] = self.current_page
+        return context
