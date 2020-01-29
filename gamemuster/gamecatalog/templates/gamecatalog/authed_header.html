@@ -9,7 +9,7 @@
             <p class="profile-greeting">Hello <u>{{ user.username }}!</u></p>
         </li>
         <li class="profile-item">
-            <a href="https://google.com" class="profile-button green">My MUSTs</a>
+            <a href="{% url 'gamecatalog:favs' %}" class="profile-button green">My MUSTs</a>
         </li>
         <li class="profile-item">
             <a href="{% url 'gamecatalog:logout' %}" class="profile-button white">Log out</a>
