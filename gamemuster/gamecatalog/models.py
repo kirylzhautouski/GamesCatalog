@@ -16,3 +16,8 @@ class User(AbstractUser):
 class GameID(models.Model):
     game_id = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['game_id', 'user'], name='users_fav_game')
+        ]
