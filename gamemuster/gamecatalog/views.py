@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import mixins
 from django.core.mail import send_mail
+from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_text
@@ -186,10 +188,10 @@ class SignUpView(generic.edit.CreateView):
         return HttpResponse('Confirm your email address to activate your acccount.')
 
 
-class ActivateView(generic.RedirectView):
-    url = reverse_lazy('gamecatalog:login')
+class ActivateView(generic.TemplateView):
+    template_name = 'gamecatalog/activate.html'
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
             uid = force_text(urlsafe_base64_decode(kwargs['upkb64']))
         except Exception:
@@ -201,7 +203,9 @@ class ActivateView(generic.RedirectView):
         if user and account_activation_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
-            return super().get(request, args, kwargs)
+            login(request, user)
+
+            return redirect('gamecatalog:profile')
         else:
             return HttpResponse('Invalid activation link')
 
