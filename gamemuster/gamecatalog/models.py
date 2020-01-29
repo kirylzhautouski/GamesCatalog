@@ -5,6 +5,7 @@ from django.db import models
 
 
 class User(AbstractUser):
+    email = models.EmailField(blank=False)
     birthday = models.DateField(null=True, blank=True)
 
     def get_ages(self):

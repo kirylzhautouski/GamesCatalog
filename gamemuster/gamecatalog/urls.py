@@ -8,6 +8,7 @@ from . import forms
 app_name = 'gamecatalog'
 urlpatterns = [
     path('signup/', views.SignUpView.as_view(), name='signup'),
+    path('activate/<str:upkb64>/<str:token>', views.ActivateView.as_view(), name='activate'),
     path('login/', auth_views.LoginView.as_view(
         form_class=forms.AuthFormWithPlaceholders,
         template_name='gamecatalog/log_in.html'),
