@@ -14,8 +14,11 @@
 
 <body>
 
-    {% block header %}
-    {% endblock header %}
+    {% if user.is_authenticated %}
+        {% include 'gamecatalog/authed_header.html' %}
+    {% else %}
+        {% include 'gamecatalog/non_authed_header.html' %}
+    {% endif %}
 
     {% block content %}{% endblock content %}
 </body>

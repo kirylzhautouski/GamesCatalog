@@ -1,18 +1,20 @@
 {% extends "gamecatalog/base/base_header.html" %}
 
+
+
 {% block header_content %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/non_authed_style.css' %}">
+
     <ul class="auth-header">
         <li class="auth-item">
             <a href="{% url 'gamecatalog:signup' %}" class="auth-button white">Sign Up</a>
         </li>
-
         <li class="auth-item">
             <p class="auth-text">or</p>
         </li>
-
         <li class="auth-item">
             <a href="{% url 'gamecatalog:login' %}" class="auth-button white">Log in</a>
         </li>
     </ul>
-
 {% endblock %}

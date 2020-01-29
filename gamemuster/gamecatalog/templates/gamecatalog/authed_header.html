@@ -1,18 +1,18 @@
 {% extends "gamecatalog/base/base_header.html" %}
 
 {% block header_content %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/authed_style.css' %}">
+
     <ul class="profile-header">
         <li class="profile-item">
             <p class="profile-greeting">Hello <u>{{ user.username }}!</u></p>
         </li>
-
         <li class="profile-item">
             <a href="https://google.com" class="profile-button green">My MUSTs</a>
         </li>
-
         <li class="profile-item">
             <a href="{% url 'gamecatalog:logout' %}" class="profile-button white">Log out</a>
         </li>
     </ul>
-
 {% endblock %}
