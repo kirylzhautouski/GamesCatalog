@@ -11,3 +11,8 @@ class User(AbstractUser):
     def get_ages(self):
         if self.birthday:
             return (date.today() - self.birthday).days // 365
+
+
+class GameID(models.Model):
+    game_id = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

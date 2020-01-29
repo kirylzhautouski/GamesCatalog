@@ -28,6 +28,14 @@
 
                 </div>
 
+                <a href="https://google.com">
+                    <span class="details-tag">
+                        MUST
+                    </span>
+                </a>
+                
+                <br>
+
                 <h7 class="details-genre">
                     {{ game.genres|join:" " }}
                 </h7>
@@ -95,7 +103,7 @@
                     <span class="rating-title">Users</span>
 
                     <span class="rating-content">
-                        {{game.rating}} ({% if game.rating_count %}{{game.rating_count}} {% else %}no {% endif %} reviews)
+                        {% if game.rating %}{{game.rating}}{% endif %} ({% if game.rating_count %}{{game.rating_count}} {% else %}no {% endif %} reviews)
                     </span>
                 </div>
 
@@ -103,7 +111,7 @@
                     <span class="rating-title">Critics</span>
 
                     <span class="rating-content">
-                        {{game.aggregated_rating}} ({% if game.aggregated_rating_count %}{{game.aggregated_rating_count}} {% else %}no {% endif %} reviews)
+                        {% if game.aggregated_rating %}{{game.aggregated_rating}}{% endif %} ({% if game.aggregated_rating_count %}{{game.aggregated_rating_count}} {% else %}no {% endif %} reviews)
                     </span>
                 </div>
 
