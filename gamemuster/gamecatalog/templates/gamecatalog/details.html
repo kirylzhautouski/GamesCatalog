@@ -4,7 +4,6 @@
 
 {% block styles %}
     {% load static %}
-
     <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/details_style.css' %}">
 {% endblock styles %}
 
@@ -28,11 +27,12 @@
 
                 </div>
 
-                <a href="https://google.com">
-                    <span class="details-tag">
-                        MUST
-                    </span>
-                </a>
+                {% if user.is_authenticated %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="MUST" class="fav-submit {% if is_fav == True %}fav{% endif %}"/>
+                    </form>
+                {% endif %}
                 
                 <br>
 

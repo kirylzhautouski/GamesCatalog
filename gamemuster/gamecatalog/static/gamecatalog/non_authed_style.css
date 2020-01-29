@@ -31,7 +31,7 @@ a.white {
     color: #E23232;
 }
 
-p.auth-text {
+span.auth-text {
     color: white;
     font-size: 18px;
     font-weight: 800;

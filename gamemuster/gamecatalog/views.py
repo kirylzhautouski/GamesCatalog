@@ -3,6 +3,7 @@ from django.contrib.auth import mixins
 from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.utils import IntegrityError
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -137,6 +138,7 @@ class DetailsView(generic.TemplateView):
         super().__init__()
 
         self.game = {}
+        self.is_fav = False
         self.tweets = []
 
     def dispatch(self, request, *args, **kwargs):
@@ -146,6 +148,10 @@ class DetailsView(generic.TemplateView):
         except igdb_api.InvalidGameIDError:
             raise Http404()
 
+        user = self.request.user
+        if user.is_authenticated and user.gameid_set.filter(game_id=self.game['id']).first():
+            self.is_fav = True
+
         try:
             self.tweets = twitter_api.TWITTER_API.get_tweets_for_game(
                 self.game['name'])
@@ -154,10 +160,20 @@ class DetailsView(generic.TemplateView):
 
         return super().dispatch(request, args, kwargs)
 
+    def post(self, request, *args, **kwargs):
+        try:
+            self.request.user.gameid_set.create(game_id=self.game['id'])
+            self.is_fav = True
+        except IntegrityError:
+            pass
+
+        return super().get(request, *args, *kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context['game'] = self.game
+        context['is_fav'] = self.is_fav
         context['tweets'] = self.tweets
 
         return context

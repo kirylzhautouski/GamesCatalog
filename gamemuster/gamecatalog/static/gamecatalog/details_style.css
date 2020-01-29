@@ -29,6 +29,19 @@
     margin-bottom: 30px;
 }
 
+.fav-submit {
+    background-color: #E23232;
+    color: white;
+    border: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 20px;
+    font-weight: 800;
+}
+
 .details-genre {
     font-weight: 800;
     font-size: 18px;
@@ -106,4 +119,9 @@
 .tweet-author {
     float: right;
     margin-right: 10px;
+}
+
+.fav {
+    background-color: #88C452;
+    pointer-events: none;
 }
