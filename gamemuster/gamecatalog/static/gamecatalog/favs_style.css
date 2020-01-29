@@ -54,6 +54,8 @@ h1.title {
 
 .game-name {
     font-weight: 800;
+    width: 80px;
+    word-wrap: anywhere;
 }
 
 p.game-text {

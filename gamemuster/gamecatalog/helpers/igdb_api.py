@@ -108,20 +108,7 @@ class IGDB_API:
         return 'sort popularity desc;'
 
     @classmethod
-    def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None,
-                      user_rating_range=None, search_query=None):
-        # Use args to filter games
-
-        games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,'
-                                                       f'genres,keywords; '
-                                                       f'limit '
-                                                       f'{games_count}; ' +
-                                        cls.__build_filters(platform_ids,
-                                                            genre_ids,
-                                                            user_rating_range)
-                                        +
-                                        cls.__build_search_query(search_query))
-
+    def __load_specific_data_for_games(cls, games_info):
         # Load cover, genres, keywords from their ids
 
         cover_ids = tuple((game_info['cover'] for game_info in games_info
@@ -183,6 +170,35 @@ class IGDB_API:
             if keyword_ids_for_game is not None:
                 for i, keyword_id in enumerate(keyword_ids_for_game):
                     keyword_ids_for_game[i] = keywords[keyword_id]
+
+    @classmethod
+    def get_all_games(cls, games_count=10, platform_ids=None, genre_ids=None,
+                      user_rating_range=None, search_query=None):
+        # Use args to filter games
+
+        games_info = cls.__make_request(cls.GAMES_URL, f'fields name,cover,'
+                                                       f'genres,keywords; '
+                                                       f'limit '
+                                                       f'{games_count}; ' +
+                                        cls.__build_filters(platform_ids,
+                                                            genre_ids,
+                                                            user_rating_range)
+                                        +
+                                        cls.__build_search_query(search_query))
+
+        cls.__load_specific_data_for_games(games_info)
+
+        return games_info
+
+    @classmethod
+    def get_games_by_ids(cls, game_ids):
+        if not game_ids:
+            return None
+
+        games_info = cls.__make_request(cls.GAMES_URL, f'fields name, cover, genres, keywords; '
+                                                       f'where id=({str(game_ids)[1:-1]});')
+
+        cls.__load_specific_data_for_games(games_info)
 
         return games_info
 
