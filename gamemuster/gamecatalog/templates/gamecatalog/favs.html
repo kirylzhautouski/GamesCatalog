@@ -1,0 +1,75 @@
+{% extends "gamecatalog/base/base.html" %}
+
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/favs_style.css' %}">
+{% endblock styles %}
+
+{% block header %}
+    {% include "gamecatalog/profile_header.html" %}
+{% endblock header %}
+
+{% block content %}
+    <div class="content">
+        <h1 class="title">My MUST</h1>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-2 game">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+
+                    <div class="container nopadding">
+                        <div class="row nopadding">
+                            <div class="col-7 nopadding">
+                                <h3 class="game-name">Pacman</h3>
+                                <p class="game-text">Action</p>
+                                <p class="game-text">Users added: 25</p>
+                            </div>
+                            <div class="col-5 nopadding">
+                                <a class="game-must" href="https://google.com">UnMUST</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+                <div class="col-2">
+                    <img class="game-img" src="{% static 'gamecatalog/images/card_background.jpg'%}" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock content %}

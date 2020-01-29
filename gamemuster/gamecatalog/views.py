@@ -212,3 +212,7 @@ class ActivateView(generic.TemplateView):
 
 class ProfileView(mixins.LoginRequiredMixin, generic.TemplateView):
     template_name = 'gamecatalog/profile.html'
+
+
+class FavouritesView(mixins.LoginRequiredMixin, generic.TemplateView):
+    template_name = 'gamecatalog/favs.html'
