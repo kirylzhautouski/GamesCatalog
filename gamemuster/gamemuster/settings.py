@@ -27,7 +27,9 @@ SECRET_KEY = 'v@14$5j*mzy_ne6+te^222m4m4$w&bg6*2f8_d*5bd)vu@h4$u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['still-earth-06042.herokuapp.com',
+                 '127.0.0.1',
+                 ]
 
 
 # Application definition
