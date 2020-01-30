@@ -1,0 +1,57 @@
+{% extends "gamecatalog/base/base.html" %}
+
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/favs_style.css' %}">
+{% endblock styles %}
+
+{% block content %}
+    <div class="content">
+        <h1 class="title">My MUST</h1>
+
+        <div class="container">
+            {% for game in games %}
+                {% if forloop.counter0|divisibleby:"6" == True %}
+                    <div class="row top-buffer">
+                {% endif %}
+
+                <div class="col-2 game">
+                    <img class="game-img" src="https://{{ game.cover }}" />
+
+                    <div class="container nopadding">
+                        <div class="row nopadding">
+                            <div class="col-7 nopadding">
+                                <a href="{% url 'gamecatalog:details' game.id %}">
+                                    <h3 class="game-name">{{ game.name }}</h3>
+                                    <p class="game-text">{% if game.keywords.0 %}{{ game.keywords.0 }}{% endif %}</p>
+                                    <p class="game-text">Users added: {{ game.users_added }}</p>
+                                </a>    
+                            </div>
+                            <div class="col-5 nopadding">
+                                <a class="game-must" href="https://google.com">UnMUST</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                {% if forloop.counter0|add:"1"|divisibleby:"6" == True %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="pages">
+
+            {% for i in '123'|make_list %}
+
+                <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
+                        href="{% url 'gamecatalog:favs' %}?page={{ forloop.counter }}">
+                    {{ forloop.counter }}
+                </a>
+
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

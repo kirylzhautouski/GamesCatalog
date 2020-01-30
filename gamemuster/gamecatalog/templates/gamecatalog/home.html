@@ -25,10 +25,6 @@
 
 {% endblock scripts %}
 
-{% block header %}
-    {% include 'gamecatalog/base/base_header.html' %}
-{% endblock header %}
-
 {% block content %}
 
 {% load static %}
@@ -141,7 +137,7 @@
             <form action="{% url 'gamecatalog:index' %}" method="get">
                 <div class="search">
                     <input type="search" placeholder="Search..." name="search" value="{{ search_query }}">
-                    <input type="submit" value="">
+                    <input type="submit" value="" class="search-submit">
                 </div>
             </form>
         </div>
@@ -158,21 +154,21 @@
                             <a href="{% url 'gamecatalog:details' game.id %}">
                                 <div class="game-card" style="background-image: url(https://{{ game.cover }})">
 
-                                <div class="game-info">
-                                    <h1 class="game-name">{{ game.name }}</h1>
-                                    <p class="game-genre">{{ game.genres|join:" " }}</p>
+                                    <div class="game-info">
+                                        <h1 class="game-name">{{ game.name }}</h1>
+                                        <p class="game-genre">{{ game.genres|join:" " }}</p>
 
-                                    <div class="game-tags">
+                                        <div class="game-tags">
 
-                                        {% for keyword in game.keywords %}
-                                            <span class="game-tag">
-                                                {{ keyword }}
-                                            </span>
-                                        {% endfor %}
+                                            {% for keyword in game.keywords %}
+                                                <span class="game-tag">
+                                                    {{ keyword }}
+                                                </span>
+                                            {% endfor %}
 
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             </a>
 
                         </div>

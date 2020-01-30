@@ -1,0 +1,86 @@
+
+.profile-header {
+    float: right;
+}
+
+li.profile-item {
+    display: inline-block;
+    padding-top: 5px;
+    margin-left: 8px;
+}
+
+.profile-greeting {
+    color: white;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0;
+}
+
+a.profile-button {
+    font-size: 24px;
+    font-weight: 800;
+    box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    text-decoration: none;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+a.green {
+    background-color: #88C452;
+    color: white;
+}
+
+a.white {
+    background-color: white;
+    color: #E23232;
+}
+
+h1.title {
+    font-size: 50px;
+    font-weight: 800;
+    margin-left: 50px;
+}
+
+.text {
+    font-size: 20px;
+}
+
+.game-img {
+    width: 150px;
+    height: 150px;
+}
+
+.game-name {
+    font-weight: 800;
+    width: 80px;
+    word-wrap: anywhere;
+}
+
+p.game-text {
+    color: grey;
+    font-weight: 600;
+    font-size: 10px;
+    margin-bottom: 0;
+}
+
+.nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+ }
+
+ a.game-must {
+     color: white;
+     background-color: #E23232;
+     box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
+     text-decoration: none;
+     font-weight: 800;
+     padding-top: 5px;
+     padding-bottom: 5px;
+     padding-left: 3px;
+     padding-right: 3px;
+     position: relative;
+     right: 10px;
+     top: 10px;
+ }

@@ -3,6 +3,7 @@ from django.contrib.auth import mixins
 from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.utils import IntegrityError
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -17,7 +18,7 @@ from requests import HTTPError
 
 from .forms import SignUpForm
 from .helpers import igdb_api, twitter_api
-from .models import User
+from .models import User, GameID
 from .tokens import account_activation_token_generator
 
 
@@ -81,7 +82,7 @@ class IndexView(generic.ListView):
         self.checked_genres_ids = self.__handle_get_filter_params(
             self.genres, igdb_api.IGDB_API.GENRES_COLUMN_NAME)
 
-        return super().dispatch(request, args, kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def __handle_get_filter_params(self, possible_params, name_key):
         params = set()
@@ -137,6 +138,7 @@ class DetailsView(generic.TemplateView):
         super().__init__()
 
         self.game = {}
+        self.is_fav = False
         self.tweets = []
 
     def dispatch(self, request, *args, **kwargs):
@@ -146,18 +148,32 @@ class DetailsView(generic.TemplateView):
         except igdb_api.InvalidGameIDError:
             raise Http404()
 
+        user = self.request.user
+        if user.is_authenticated and user.gameid_set.filter(game_id=self.game['id']).first():
+            self.is_fav = True
+
         try:
             self.tweets = twitter_api.TWITTER_API.get_tweets_for_game(
                 self.game['name'])
         except HTTPError:
             pass
 
-        return super().dispatch(request, args, kwargs)
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            self.request.user.gameid_set.create(game_id=self.game['id'])
+            self.is_fav = True
+        except IntegrityError:
+            pass
+
+        return super().get(request, *args, *kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context['game'] = self.game
+        context['is_fav'] = self.is_fav
         context['tweets'] = self.tweets
 
         return context
@@ -212,3 +228,37 @@ class ActivateView(generic.TemplateView):
 
 class ProfileView(mixins.LoginRequiredMixin, generic.TemplateView):
     template_name = 'gamecatalog/profile.html'
+
+
+class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
+    template_name = 'gamecatalog/favs.html'
+    context_object_name = 'games'
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if 'page' in self.request.GET:
+                self.current_page = int(self.request.GET['page'])
+            else:
+                self.current_page = 1
+        except ValueError:
+            raise Http404()
+
+        if not (1 <= self.current_page <= 3):
+            raise Http404()
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.gameid_set.values_list('game_id',
+                                                                                                 flat=True)))
+        if games:
+            for game in games:
+                game['users_added'] = len(GameID.objects.all().filter(game_id=game['id']))
+
+        return games[(self.current_page - 1) * 12:
+                     (self.current_page - 1) * 12 + 12]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_page'] = self.current_page
+        return context

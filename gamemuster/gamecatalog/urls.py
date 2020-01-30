@@ -15,6 +15,7 @@ urlpatterns = [
         name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
+    path('favs/', views.FavouritesView.as_view(), name='favs'),
     path('games/', views.IndexView.as_view(), name='index'),
     path('games/<int:game_id>/', views.DetailsView.as_view(), name='details'),
 ]

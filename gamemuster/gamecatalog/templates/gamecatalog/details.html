@@ -4,13 +4,8 @@
 
 {% block styles %}
     {% load static %}
-
     <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/details_style.css' %}">
 {% endblock styles %}
-
-{% block header %}
-    {% include 'gamecatalog/base/base_header.html' %}
-{% endblock header %}
 
 {% block content %}
 
@@ -31,6 +26,15 @@
                     {% endfor %}
 
                 </div>
+
+                {% if user.is_authenticated %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="MUST" class="fav-submit {% if is_fav == True %}fav{% endif %}"/>
+                    </form>
+                {% endif %}
+                
+                <br>
 
                 <h7 class="details-genre">
                     {{ game.genres|join:" " }}
@@ -99,7 +103,7 @@
                     <span class="rating-title">Users</span>
 
                     <span class="rating-content">
-                        {{game.rating}} ({% if game.rating_count %}{{game.rating_count}} {% else %}no {% endif %} reviews)
+                        {% if game.rating %}{{game.rating}}{% endif %} ({% if game.rating_count %}{{game.rating_count}} {% else %}no {% endif %} reviews)
                     </span>
                 </div>
 
@@ -107,7 +111,7 @@
                     <span class="rating-title">Critics</span>
 
                     <span class="rating-content">
-                        {{game.aggregated_rating}} ({% if game.aggregated_rating_count %}{{game.aggregated_rating_count}} {% else %}no {% endif %} reviews)
+                        {% if game.aggregated_rating %}{{game.aggregated_rating}}{% endif %} ({% if game.aggregated_rating_count %}{{game.aggregated_rating_count}} {% else %}no {% endif %} reviews)
                     </span>
                 </div>
 

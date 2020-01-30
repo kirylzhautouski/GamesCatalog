@@ -202,7 +202,7 @@ input[type="search"] {
     width: 90%;
 }
 
-input[type="submit"] {
+input[type="submit"].search-submit {
     width: 20px;
     height: 20px;
     border: none;
@@ -305,6 +305,7 @@ span.game-tag {
 
 div.pages {
     margin-top: 20px;
+    text-align: center;
 }
 
 .top-buffer {
