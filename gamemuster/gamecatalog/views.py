@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.utils import IntegrityError
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -262,3 +262,15 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
         context['current_page'] = self.current_page
         return context
+
+
+class SoftDeleteFromFavsView(generic.View):
+
+    def delete(self, request, *args, **kwargs):
+        return JsonResponse({'success': True, 'message': 'Game was deleted from favs'})
+
+
+class RestoreToFavsView(generic.View):
+
+    def post(self, request, *args, **kwargs):
+        return JsonResponse({'success': True, 'message': 'Game was restored'})
