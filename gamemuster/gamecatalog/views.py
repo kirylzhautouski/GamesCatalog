@@ -162,7 +162,13 @@ class DetailsView(generic.TemplateView):
 
     def post(self, request, *args, **kwargs):
         try:
-            self.request.user.gameid_set.create(game_id=self.game['id'])
+            fav_game = self.request.user.gameid_set(manager='objects').filter(game_id=self.game['id']).first()
+            if fav_game:
+                fav_game.is_deleted = False
+                fav_game.save()
+            else:
+                self.request.user.gameid_set.create(game_id=self.game['id'])
+
             self.is_fav = True
         except IntegrityError:
             pass
