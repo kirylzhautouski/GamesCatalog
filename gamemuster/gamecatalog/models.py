@@ -23,8 +23,8 @@ class GameID(models.Model):
     is_deleted = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    objects = models.Manager()
     not_deleted_objects = GameIDNotDeletedManager()
+    objects = models.Manager()
 
     class Meta:
         constraints = [

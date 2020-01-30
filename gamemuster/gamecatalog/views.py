@@ -249,11 +249,11 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.gameid_set.values_list('game_id',
-                                                                                                 flat=True)))
+        games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.gameid_set(manager='not_deleted_objects')
+                                                                         .values_list('game_id', flat=True)))
         if games:
             for game in games:
-                game['users_added'] = len(GameID.objects.all().filter(game_id=game['id']))
+                game['users_added'] = len(GameID.not_deleted_objects.all().filter(game_id=game['id']))
 
         return games[(self.current_page - 1) * 12:
                      (self.current_page - 1) * 12 + 12]
@@ -267,10 +267,24 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
 class SoftDeleteFromFavsView(generic.View):
 
     def delete(self, request, *args, **kwargs):
+        try:
+            game = request.user.gameid_set(manager='not_deleted_objects').filter(game_id=kwargs['game_id']).first()
+            game.is_deleted = True
+            game.save()
+        except Exception as ex:
+            return JsonResponse({'success': False, 'message': str(ex)})
+
         return JsonResponse({'success': True, 'message': 'Game was deleted from favs'})
 
 
 class RestoreToFavsView(generic.View):
 
     def post(self, request, *args, **kwargs):
+        try:
+            game = request.user.gameid_set(manager='objects').filter(game_id=kwargs['game_id']).first()
+            game.is_deleted = False
+            game.save()
+        except Exception as ex:
+            return JsonResponse({'success': False, 'message': str(ex)})
+
         return JsonResponse({'success': True, 'message': 'Game was restored'})
