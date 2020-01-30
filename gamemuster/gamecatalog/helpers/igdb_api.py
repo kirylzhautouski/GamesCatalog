@@ -196,7 +196,8 @@ class IGDB_API:
             return None
 
         games_info = cls.__make_request(cls.GAMES_URL, f'fields name, cover, genres, keywords; '
-                                                       f'where id=({str(game_ids)[1:-1]});')
+                                                       f'where id=({str(game_ids)[1:-1]});'
+                                                       f'limit {len(game_ids)};')
 
         cls.__load_specific_data_for_games(games_info)
 
