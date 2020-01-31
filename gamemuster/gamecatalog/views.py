@@ -42,8 +42,6 @@ class IndexView(generic.ListView):
         self.rating_from = None
         self.rating_to = None
 
-        logger.info('IGDB=' + settings.IGDB_API_KEY)
-
         self.platforms = igdb_api.IGDB_API.get_all_resources_at_url(
             igdb_api.IGDB_API.PLATFORMS_URL,
             igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
@@ -269,8 +267,8 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
             for game in games:
                 game['users_added'] = len(GameID.not_deleted_objects.all().filter(game_id=game['id']))
 
-        return games[(self.current_page - 1) * 12:
-                     (self.current_page - 1) * 12 + 12]
+            return games[(self.current_page - 1) * 12:
+                         (self.current_page - 1) * 12 + 12]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
