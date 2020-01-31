@@ -27,8 +27,7 @@ class Keyword(models.Model):
 
 
 class Game(models.Model):
-    igdb_id = models.IntegerField(blank=False, null=False)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     cover_url = models.URLField()
     summary = models.TextField()
     release_date = models.DateField()
@@ -37,9 +36,9 @@ class Game(models.Model):
     aggregated_rating = models.FloatField()
     aggregated_rating_count = models.IntegerField()
 
-    platforms = models.ManyToManyField(Platform)
-    genres = models.ManyToManyField(Genre)
-    keywords = models.ManyToManyField(Keyword)
+    platforms = models.ManyToManyField(Platform, related_name='games')
+    genres = models.ManyToManyField(Genre, related_name='games')
+    keywords = models.ManyToManyField(Keyword, related_name='games')
 
 
 class FavouriteNotDeletedManager(models.Manager):
@@ -48,19 +47,19 @@ class FavouriteNotDeletedManager(models.Manager):
 
 
 class Favourite(models.Model):
-    game_igdb_id = models.IntegerField()
+    game = models.ForeignKey(Game, related_name='favourites', on_delete=models.CASCADE)
     is_deleted = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='favourites', on_delete=models.CASCADE)
 
     not_deleted_objects = FavouriteNotDeletedManager()
     objects = models.Manager()
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['game_igdb_id', 'user'], name='users_fav_game')
+            models.UniqueConstraint(fields=['game', 'user'], name='users_fav_game')
         ]
 
 
 class Screenshot(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, related_name='screenshots', on_delete=models.CASCADE)
     url = models.URLField()
