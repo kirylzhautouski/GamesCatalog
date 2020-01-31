@@ -16,10 +16,16 @@ from django.views import generic
 from requests import HTTPError
 
 
+import logging
+
+
 from .forms import SignUpForm
 from .helpers import igdb_api, twitter_api
 from .models import User, GameID
 from .tokens import account_activation_token_generator
+
+
+logger = logging.getLogger(__file__)
 
 
 class IndexView(generic.ListView):
@@ -35,6 +41,8 @@ class IndexView(generic.ListView):
 
         self.rating_from = None
         self.rating_to = None
+
+        logger.info('IGDB=' + settings.IGDB_API_KEY)
 
         self.platforms = igdb_api.IGDB_API.get_all_resources_at_url(
             igdb_api.IGDB_API.PLATFORMS_URL,
