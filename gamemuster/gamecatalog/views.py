@@ -16,10 +16,16 @@ from django.views import generic
 from requests import HTTPError
 
 
+import logging
+
+
 from .forms import SignUpForm
 from .helpers import igdb_api, twitter_api
 from .models import User, GameID
 from .tokens import account_activation_token_generator
+
+
+logger = logging.getLogger(__file__)
 
 
 class IndexView(generic.ListView):
@@ -261,8 +267,8 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
             for game in games:
                 game['users_added'] = len(GameID.not_deleted_objects.all().filter(game_id=game['id']))
 
-        return games[(self.current_page - 1) * 12:
-                     (self.current_page - 1) * 12 + 12]
+            return games[(self.current_page - 1) * 12:
+                         (self.current_page - 1) * 12 + 12]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
