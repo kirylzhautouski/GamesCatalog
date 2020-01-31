@@ -37,6 +37,10 @@ a.white {
     color: #E23232;
 }
 
+a.green {
+    background-color: #88C452;
+}
+
 h1.title {
     font-size: 50px;
     font-weight: 800;

@@ -1,0 +1,1 @@
+web: gunicorn gamemuster.wsgi --log-file -

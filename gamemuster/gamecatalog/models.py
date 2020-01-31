@@ -13,9 +13,18 @@ class User(AbstractUser):
             return (date.today() - self.birthday).days // 365
 
 
+class GameIDNotDeletedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
+
+
 class GameID(models.Model):
     game_id = models.IntegerField()
+    is_deleted = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    not_deleted_objects = GameIDNotDeletedManager()
+    objects = models.Manager()
 
     class Meta:
         constraints = [
