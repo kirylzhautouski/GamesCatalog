@@ -14,27 +14,27 @@ class User(AbstractUser):
 
 
 class Platform(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80, unique=True)
     slug = models.CharField(max_length=20)
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
 
 class Keyword(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
 
 class Game(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    cover_url = models.URLField()
-    summary = models.TextField()
-    release_date = models.DateField()
-    rating = models.FloatField()
-    rating_count = models.IntegerField()
-    aggregated_rating = models.FloatField()
-    aggregated_rating_count = models.IntegerField()
+    cover_url = models.URLField(blank=True, null=True)
+    summary = models.TextField(blank=True, null=True)
+    release_date = models.DateField(blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
+    rating_count = models.IntegerField(blank=True, null=True)
+    aggregated_rating = models.FloatField(blank=True, null=True)
+    aggregated_rating_count = models.IntegerField(blank=True, null=True)
 
     platforms = models.ManyToManyField(Platform, related_name='games')
     genres = models.ManyToManyField(Genre, related_name='games')
@@ -62,4 +62,4 @@ class Favourite(models.Model):
 
 class Screenshot(models.Model):
     game = models.ForeignKey(Game, related_name='screenshots', on_delete=models.CASCADE)
-    url = models.URLField()
+    url = models.URLField(unique=True)
