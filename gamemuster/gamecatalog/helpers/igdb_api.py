@@ -304,8 +304,17 @@ class IGDB_API:
                 for resource_info in resources_info}
 
     @classmethod
-    def get_all_resources_at_url(cls, url, column_name):
-        return cls.__make_request(url, f"fields id, {column_name}; limit 20;")
+    def get_all_resources_at_url(cls, url, column_name, *args, resources_count=None):
+        query = f'fields id, {column_name}'
+
+        for arg in args:
+            query += f', {arg}'
+
+        if not resources_count:
+            resources_count = 20
+
+        query += f'; limit {resources_count};'
+        return cls.__make_request(url, query)
 
 
 if __name__ == "__main__":

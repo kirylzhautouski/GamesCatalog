@@ -14,8 +14,8 @@ class User(AbstractUser):
 
 
 class Platform(models.Model):
-    name = models.CharField(max_length=80, unique=True)
-    slug = models.CharField(max_length=20)
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.CharField(max_length=40, unique=True)
 
 
 class Genre(models.Model):
