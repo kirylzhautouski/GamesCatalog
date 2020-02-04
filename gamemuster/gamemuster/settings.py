@@ -167,4 +167,3 @@ if 'localhost' not in os.getenv('DATABASE_URL'):
 
 BROKER_URL = f"amqp://{os.getenv('BROKER_USER')}:{os.getenv('BROKER_PASSWORD')}@localhost:5672/"\
              f"{os.getenv('BROKER_HOST')}"
-print(BROKER_URL)
