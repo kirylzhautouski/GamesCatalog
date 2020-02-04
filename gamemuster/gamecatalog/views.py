@@ -3,6 +3,7 @@ from django.contrib.auth import mixins
 from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Q
 from django.db.utils import IntegrityError
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect
@@ -17,11 +18,13 @@ from requests import HTTPError
 
 
 import logging
+import functools
+import operator
 
 
 from .forms import SignUpForm
-from .helpers import igdb_api, twitter_api
-from .models import User, Favourite
+from .helpers import twitter_api
+from .models import User, Favourite, Platform, Genre, Game
 from .tokens import account_activation_token_generator
 
 
@@ -42,15 +45,11 @@ class IndexView(generic.ListView):
         self.rating_from = None
         self.rating_to = None
 
-        self.platforms = igdb_api.IGDB_API.get_all_resources_at_url(
-            igdb_api.IGDB_API.PLATFORMS_URL,
-            igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
+        self.platforms = Platform.objects.all()[:20]
 
         self.checked_platforms_ids = None
 
-        self.genres = igdb_api.IGDB_API.get_all_resources_at_url(
-            igdb_api.IGDB_API.GENRES_URL,
-            igdb_api.IGDB_API.GENRES_COLUMN_NAME)
+        self.genres = Genre.objects.all()[:20]
 
         self.checked_genres_ids = None
 
@@ -83,33 +82,43 @@ class IndexView(generic.ListView):
             self.filter_params += f'&rating_to={self.rating_to}'
 
         self.checked_platforms_ids = self.__handle_get_filter_params(
-            self.platforms, igdb_api.IGDB_API.PLATFORMS_SLUG_COLUMN_NAME)
+            self.platforms)
 
         self.checked_genres_ids = self.__handle_get_filter_params(
-            self.genres, igdb_api.IGDB_API.GENRES_COLUMN_NAME)
+            self.genres)
 
         return super().dispatch(request, *args, **kwargs)
 
-    def __handle_get_filter_params(self, possible_params, name_key):
+    def __handle_get_filter_params(self, possible_params):
         params = set()
         for get_param in self.request.GET:
             for possible_param in possible_params:
-                if possible_param[name_key] == get_param:
-                    params.add(possible_param['id'])
+                if possible_param.slug == get_param:
+                    params.add(possible_param.id)
 
                     self.filter_params += f'&{get_param}=on'
 
         return params
 
     def get_queryset(self):
-        games = igdb_api.IGDB_API.get_all_games(
-            games_count=18,
-            search_query=(self.search_query
-                          if self.search_query != '' else None),
-            user_rating_range=(self.rating_from, self.rating_to),
-            platform_ids=self.checked_platforms_ids,
-            genre_ids=self.checked_genres_ids)
+        conditions = list()
 
+        if self.search_query:
+            conditions.append(Q(name__icontains=self.search_query))
+
+        if self.rating_from is not None and self.rating_to is not None:
+            conditions.append(Q(rating__range=(self.rating_from, self.rating_to)))
+
+        if self.checked_platforms_ids:
+            conditions.append(Q(platforms__in=self.checked_platforms_ids))
+
+        if self.checked_genres_ids:
+            conditions.append(Q(genres__in=self.checked_genres_ids))
+
+        games = Game.objects
+        if conditions:
+            games = games.filter(functools.reduce(operator.and_, conditions))
+        games = games.distinct()[:18]
         return games[(self.current_page - 1) * 6:
                      (self.current_page - 1) * 6 + 6]
 
@@ -148,19 +157,18 @@ class DetailsView(generic.TemplateView):
         self.tweets = []
 
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.game = igdb_api.IGDB_API.get_game(kwargs['game_id'])
+        self.game = Game.objects.filter(id=kwargs['game_id']).first()
 
-        except igdb_api.InvalidGameIDError:
+        if not self.game:
             raise Http404()
 
         user = self.request.user
-        if user.is_authenticated and user.favourite_set.filter(game_igdb_id=self.game['id']).first():
+        if user.is_authenticated and user.favourites.filter(game=self.game).first():
             self.is_fav = True
 
         try:
             self.tweets = twitter_api.TWITTER_API.get_tweets_for_game(
-                self.game['name'])
+                self.game.name)
         except HTTPError:
             pass
 
@@ -168,12 +176,12 @@ class DetailsView(generic.TemplateView):
 
     def post(self, request, *args, **kwargs):
         try:
-            fav_game = self.request.user.favourite_set(manager='objects').filter(game_igdb_id=self.game['id']).first()
+            fav_game = self.request.user.favourites(manager='objects').filter(game=self.game).first()
             if fav_game:
                 fav_game.is_deleted = False
                 fav_game.save()
             else:
-                self.request.user.favourite_set.create(game_igdb_id=self.game['id'])
+                self.request.user.favourites.create(game=self.game)
 
             self.is_fav = True
         except IntegrityError:
@@ -261,11 +269,12 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.favourite_set(manager='not_deleted_objects')
-                                                                         .values_list('game_igdb_id', flat=True)))
+        games = Game.objects.filter(id__in=self.request.user.favourites(manager='not_deleted_objects')
+                                                            .values_list('game', flat=True))
+
         if games:
             for game in games:
-                game['users_added'] = len(Favourite.not_deleted_objects.all().filter(game_igdb_id=game['id']))
+                game.users_added = len(Favourite.not_deleted_objects.all().filter(game=game))
 
             return games[(self.current_page - 1) * 12:
                          (self.current_page - 1) * 12 + 12]
@@ -280,9 +289,9 @@ class SoftDeleteFromFavsView(generic.View):
 
     def delete(self, request, *args, **kwargs):
         try:
-            game = request.user.favourite_set(manager='not_deleted_objects').filter(game_igdb_id=kwargs['game_id']).first()
-            game.is_deleted = True
-            game.save()
+            fav = request.user.favourites(manager='not_deleted_objects').filter(game__id=kwargs['game_id']).first()
+            fav.is_deleted = True
+            fav.save()
         except Exception as ex:
             return JsonResponse({'success': False, 'message': str(ex)})
 
@@ -293,9 +302,9 @@ class RestoreToFavsView(generic.View):
 
     def post(self, request, *args, **kwargs):
         try:
-            game = request.user.favourite_set(manager='objects').filter(game_igdb_id=kwargs['game_id']).first()
-            game.is_deleted = False
-            game.save()
+            fav = request.user.favourites(manager='objects').filter(game__id=kwargs['game_id']).first()
+            fav.is_deleted = False
+            fav.save()
         except Exception as ex:
             return JsonResponse({'success': False, 'message': str(ex)})
 

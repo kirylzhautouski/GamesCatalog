@@ -19,11 +19,11 @@ class Platform(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    slug = models.CharField(max_length=100, unique=True)
 
 
 class Keyword(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    slug = models.CharField(max_length=100, unique=True)
 
 
 class Game(models.Model):
