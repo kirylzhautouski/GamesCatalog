@@ -21,7 +21,7 @@ import logging
 
 from .forms import SignUpForm
 from .helpers import igdb_api, twitter_api
-from .models import User, GameID
+from .models import User, Favourite
 from .tokens import account_activation_token_generator
 
 
@@ -155,7 +155,7 @@ class DetailsView(generic.TemplateView):
             raise Http404()
 
         user = self.request.user
-        if user.is_authenticated and user.gameid_set.filter(game_id=self.game['id']).first():
+        if user.is_authenticated and user.favourite_set.filter(game_igdb_id=self.game['id']).first():
             self.is_fav = True
 
         try:
@@ -168,12 +168,12 @@ class DetailsView(generic.TemplateView):
 
     def post(self, request, *args, **kwargs):
         try:
-            fav_game = self.request.user.gameid_set(manager='objects').filter(game_id=self.game['id']).first()
+            fav_game = self.request.user.favourite_set(manager='objects').filter(game_igdb_id=self.game['id']).first()
             if fav_game:
                 fav_game.is_deleted = False
                 fav_game.save()
             else:
-                self.request.user.gameid_set.create(game_id=self.game['id'])
+                self.request.user.favourite_set.create(game_igdb_id=self.game['id'])
 
             self.is_fav = True
         except IntegrityError:
@@ -261,11 +261,11 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.gameid_set(manager='not_deleted_objects')
-                                                                         .values_list('game_id', flat=True)))
+        games = igdb_api.IGDB_API.get_games_by_ids(list(self.request.user.favourite_set(manager='not_deleted_objects')
+                                                                         .values_list('game_igdb_id', flat=True)))
         if games:
             for game in games:
-                game['users_added'] = len(GameID.not_deleted_objects.all().filter(game_id=game['id']))
+                game['users_added'] = len(Favourite.not_deleted_objects.all().filter(game_igdb_id=game['id']))
 
             return games[(self.current_page - 1) * 12:
                          (self.current_page - 1) * 12 + 12]
@@ -280,7 +280,7 @@ class SoftDeleteFromFavsView(generic.View):
 
     def delete(self, request, *args, **kwargs):
         try:
-            game = request.user.gameid_set(manager='not_deleted_objects').filter(game_id=kwargs['game_id']).first()
+            game = request.user.favourite_set(manager='not_deleted_objects').filter(game_igdb_id=kwargs['game_id']).first()
             game.is_deleted = True
             game.save()
         except Exception as ex:
@@ -293,7 +293,7 @@ class RestoreToFavsView(generic.View):
 
     def post(self, request, *args, **kwargs):
         try:
-            game = request.user.gameid_set(manager='objects').filter(game_id=kwargs['game_id']).first()
+            game = request.user.favourite_set(manager='objects').filter(game_igdb_id=kwargs['game_id']).first()
             game.is_deleted = False
             game.save()
         except Exception as ex:

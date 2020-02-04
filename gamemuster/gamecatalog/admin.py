@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import User, GameID
+from .models import User, Favourite
 
 
 admin.site.register(User)
-admin.site.register(GameID)
+admin.site.register(Favourite)

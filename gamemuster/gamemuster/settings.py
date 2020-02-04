@@ -163,3 +163,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 if 'localhost' not in os.getenv('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
+
+BROKER_URL = f"amqp://{os.getenv('BROKER_USER')}:{os.getenv('BROKER_PASSWORD')}@localhost:5672/"\
+             f"{os.getenv('BROKER_HOST')}"

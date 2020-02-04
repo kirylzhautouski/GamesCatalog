@@ -2,6 +2,8 @@ import requests
 
 from django.conf import settings
 
+from datetime import datetime
+
 
 def list_values_comma_separated(values):
     return str(values)[1:-1]
@@ -218,7 +220,7 @@ class IGDB_API:
             cls.__make_request(cls.GAMES_URL, 'fields name, '
                                               'platforms, keywords, '
                                               'genres, summary, '
-                                              'release_dates, '
+                                              'first_release_date, '
                                               'screenshots, rating, '
                                               'rating_count, '
                                               'aggregated_rating, '
@@ -244,10 +246,6 @@ class IGDB_API:
         cls.__map_ids_to_names(keyword_ids, cls.KEYWORDS_URL,
                                cls.KEYWORDS_COLUMN_NAME)
 
-        release_date_ids = game_info.get('release_dates')
-        cls.__map_ids_to_names(release_date_ids, cls.RELEASE_DATES_URL,
-                               cls.RELEASE_DATES_COLUMN_NAME)
-
         screenshots_ids = game_info.get('screenshots')
         cls.__map_ids_to_names(screenshots_ids, cls.SCREENSHOTS_URL,
                                cls.SCREENSHOTS_COLUMN_NAME)
@@ -266,6 +264,10 @@ class IGDB_API:
         if 'aggregated_rating' in game_info:
             game_info['aggregated_rating'] = \
                 round(game_info['aggregated_rating'] / 10, 2)
+
+        release_date_timestamp = game_info.get('first_release_date')
+        if release_date_timestamp:
+            game_info['first_release_date'] = datetime.utcfromtimestamp(release_date_timestamp)
 
         return game_info
 
@@ -302,8 +304,17 @@ class IGDB_API:
                 for resource_info in resources_info}
 
     @classmethod
-    def get_all_resources_at_url(cls, url, column_name):
-        return cls.__make_request(url, f"fields id, {column_name}; limit 20;")
+    def get_all_resources_at_url(cls, url, column_name, *args, resources_count=None):
+        query = f'fields id, {column_name}'
+
+        for arg in args:
+            query += f', {arg}'
+
+        if not resources_count:
+            resources_count = 20
+
+        query += f'; limit {resources_count};'
+        return cls.__make_request(url, query)
 
 
 if __name__ == "__main__":
