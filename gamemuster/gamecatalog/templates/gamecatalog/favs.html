@@ -1,6 +1,7 @@
 {% extends "gamecatalog/base/base.html" %}
 
 {% load static %}
+{% load game_tags %}
 
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/favs_style.css' %}">
@@ -25,7 +26,7 @@
                                 <a href="{% url 'gamecatalog:details' favourite.game.id %}">
                                     <h3 class="game-name">{{ favourite.game.name }}</h3>
                                     <p class="game-text">{% if favourite.game.keywords.0 %}{{ favourite.game.keywords.0 }}{% endif %}</p>
-                                    {% comment %} TODO: create custom template filter <p class="game-text">Users added: {{ favourite.game.users_added }}</p> {% endcomment %}
+                                    <p class="game-text">Users added: {{ favourite.game|fav_count }}</p>
                                 </a>    
                             </div>
                             <div class="col-5 nopadding">
