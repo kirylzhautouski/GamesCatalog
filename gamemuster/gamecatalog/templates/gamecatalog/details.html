@@ -1,6 +1,7 @@
 {% extends "gamecatalog/base/base.html" %}
 
 {% load static %}
+{% load game_tags %}
 
 {% block styles %}
     {% load static %}
@@ -27,10 +28,10 @@
 
                 </div>
 
-                {% if user.is_authenticated %}
+                {% if request.user.is_authenticated %}
                     <form method="post">
                         {% csrf_token %}
-                        <input type="submit" value="MUST" class="fav-submit {% if is_fav == True %}fav{% endif %}"/>
+                        <input type="submit" value="MUST" class="fav-submit {% if game|is_favourite:request.user %}fav{% endif %}"/>
                     </form>
                 {% endif %}
                 

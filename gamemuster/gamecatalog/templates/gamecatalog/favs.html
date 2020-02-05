@@ -11,25 +11,25 @@
         <h1 class="title">My MUST</h1>
 
         <div class="container">
-            {% for game in games %}
+            {% for favourite in favourites %}
                 {% if forloop.counter0|divisibleby:"6" == True %}
                     <div class="row top-buffer">
                 {% endif %}
 
                 <div class="col-2 game">
-                    <img class="game-img" src="https://{{ game.cover_url }}" />
+                    <img class="game-img" src="https://{{ favourite.game.cover_url }}" />
 
                     <div class="container nopadding">
                         <div class="row nopadding">
                             <div class="col-7 nopadding">
-                                <a href="{% url 'gamecatalog:details' game.id %}">
-                                    <h3 class="game-name">{{ game.name }}</h3>
-                                    <p class="game-text">{% if game.keywords.0 %}{{ game.keywords.0 }}{% endif %}</p>
-                                    <p class="game-text">Users added: {{ game.users_added }}</p>
+                                <a href="{% url 'gamecatalog:details' favourite.game.id %}">
+                                    <h3 class="game-name">{{ favourite.game.name }}</h3>
+                                    <p class="game-text">{% if favourite.game.keywords.0 %}{{ favourite.game.keywords.0 }}{% endif %}</p>
+                                    {% comment %} TODO: create custom template filter <p class="game-text">Users added: {{ favourite.game.users_added }}</p> {% endcomment %}
                                 </a>    
                             </div>
                             <div class="col-5 nopadding">
-                                <a class="game-must" id="{{game.id}}">UnMUST</a>
+                                <a class="game-must" id="{{favourite.game.id}}">UnMUST</a>
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
             {% endfor %}
         </div>
 
-        <div class="pages">
+        {% comment %} <div class="pages">
 
             {% for i in '123'|make_list %}
 
@@ -52,6 +52,24 @@
                 </a>
 
             {% endfor %}
+        </div> {% endcomment %}
+
+        {% comment %} TODO: complete pagination {% endcomment %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; 1</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                {% endif %}
+            </span>
         </div>
     </div>
 {% endblock content %}

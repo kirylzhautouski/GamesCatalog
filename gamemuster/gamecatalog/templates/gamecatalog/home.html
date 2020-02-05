@@ -10,7 +10,7 @@
               range: true,
               min: 0,
               max: 10,
-              values: [ {% if rating_from %} {{ rating_from }} {% else %}0{% endif %}, {% if rating_to %} {{ rating_to }} {% else %}10{% endif %} ],
+              values: [ {% if qs.rating_from %} {{ qs.rating_from }} {% else %}0{% endif %}, {% if qs.rating_to %} {{ qs.rating_to }} {% else %}10{% endif %} ],
               slide: function( event, ui ) {
                 $( "#rating_from" ).val( ui.values[ 0 ] );
                 $( "#rating_to" ).val( ui.values[ 1 ] );
@@ -44,7 +44,7 @@
         <form action="{% url 'gamecatalog:index' %}"
               method="get">
 
-            <input name="search" style="display:none;" value="{{ search_query }}"/>
+            <input name="search" style="display:none;" value="{{ qs.search }}"/>
 
             <div class="filters">
                 <h5 class="side-subtitle">Platforms</h5>
@@ -136,7 +136,7 @@
         <div class="search-bar">
             <form action="{% url 'gamecatalog:index' %}" method="get">
                 <div class="search">
-                    <input type="search" placeholder="Search..." name="search" value="{{ search_query }}">
+                    <input type="search" placeholder="Search..." name="search" value="{{ qs.search }}">
                     <input type="submit" value="" class="search-submit">
                 </div>
             </form>
