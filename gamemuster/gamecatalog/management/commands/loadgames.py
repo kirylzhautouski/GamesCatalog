@@ -19,12 +19,12 @@ class Command(BaseCommand):
         genres = IGDB_API.get_all_resources_at_url(IGDB_API.GENRES_URL, IGDB_API.GENRES_COLUMN_NAME,
                                                    resources_count=500)
         for genre in genres:
-            Genre.objects.get_or_create(name=genre[IGDB_API.GENRES_COLUMN_NAME])
+            Genre.objects.get_or_create(slug=genre[IGDB_API.GENRES_COLUMN_NAME])
 
         keywords = IGDB_API.get_all_resources_at_url(IGDB_API.KEYWORDS_URL, IGDB_API.KEYWORDS_COLUMN_NAME,
                                                      resources_count=500)
         for keyword in keywords:
-            Keyword.objects.get_or_create(name=keyword[IGDB_API.KEYWORDS_COLUMN_NAME])
+            Keyword.objects.get_or_create(slug=keyword[IGDB_API.KEYWORDS_COLUMN_NAME])
 
     def handle(self, *args, **options):
         self.__preload_resources()
@@ -57,11 +57,11 @@ class Command(BaseCommand):
 
                     game_genres = single_game_info.get('genres')
                     if game_genres:
-                        game.genres.add(*Genre.objects.filter(name__in=game_genres))
+                        game.genres.add(*Genre.objects.filter(slug__in=game_genres))
 
                     game_keywords = single_game_info.get('keywords')
                     if game_keywords:
-                        game.keywords.add(*Keyword.objects.filter(name__in=game_keywords))
+                        game.keywords.add(*Keyword.objects.filter(slug__in=game_keywords))
 
                     game_screenshots = single_game_info.get('screenshots')
                     if game_screenshots:

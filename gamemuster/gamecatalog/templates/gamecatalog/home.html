@@ -152,17 +152,17 @@
 
                         <div class="col-sm text-center">
                             <a href="{% url 'gamecatalog:details' game.id %}">
-                                <div class="game-card" style="background-image: url(https://{{ game.cover }})">
+                                <div class="game-card" style="background-image: url(https://{{ game.cover_url }})">
 
                                     <div class="game-info">
                                         <h1 class="game-name">{{ game.name }}</h1>
-                                        <p class="game-genre">{{ game.genres|join:" " }}</p>
+                                        <p class="game-genre">{{ game.genres.first.slug }}</p>
 
                                         <div class="game-tags">
 
-                                            {% for keyword in game.keywords %}
+                                            {% for keyword in game.keywords.all %}
                                                 <span class="game-tag">
-                                                    {{ keyword }}
+                                                    {{ keyword.slug }}
                                                 </span>
                                             {% endfor %}
 

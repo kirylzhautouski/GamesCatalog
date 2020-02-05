@@ -19,9 +19,9 @@
                         {{ game.name }}
                      </h1>
 
-                    {% for keyword in game.keywords %}
+                    {% for keyword in game.keywords.all %}
                         <span class="details-tag">
-                             {{ keyword }}
+                             {{ keyword.slug }}
                         </span>
                     {% endfor %}
 
@@ -37,7 +37,7 @@
                 <br>
 
                 <h7 class="details-genre">
-                    {{ game.genres|join:" " }}
+                    {{ game.genres.first.slug }}
                 </h7>
 
                 <h3 class="details-title">
@@ -67,7 +67,7 @@
                 </h3>
 
                 <div class="container-fluid no-padding margin-top">
-                        {% for screenshot in game.screenshots|slice:":6" %}
+                        {% for screenshot in game.screenshots.all|slice:":6" %}
 
                             {% if forloop.counter0|divisibleby:"3" == True %}
 
@@ -76,7 +76,7 @@
                             {% endif %}
 
                             <div class="col-4">
-                                <img class="screenshot" src="https://{{screenshot}}" />
+                                <img class="screenshot" src="https://{{screenshot.url}}" />
                             </div>
 
                             {% if forloop.counter0|add:"1"|divisibleby:"3" == True %}
@@ -119,9 +119,9 @@
                     Genres
                 </h3>
 
-                {% for genre in game.genres %}
+                {% for genre in game.genres.all %}
                     <span class="details-tag">
-                        {{ genre }}
+                        {{ genre.slug }}
                     </span>
                 {% endfor %}
 
@@ -129,12 +129,12 @@
                     Platforms
                 </h3>
 
-                {% if game.platforms %}
+                {% if game.platforms.all %}
 
-                    {% for platform in game.platforms %}
+                    {% for platform in game.platforms.all %}
 
                         <span class="details-tag margin-left">
-                            {{ platform }}
+                            {{ platform.name }}
                         </span>
 
                     {% endfor %}
