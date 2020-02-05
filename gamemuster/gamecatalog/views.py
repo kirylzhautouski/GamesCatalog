@@ -4,17 +4,13 @@ from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
-from django.db.utils import IntegrityError
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import generic
-
-
-from requests import HTTPError
 
 
 import logging
@@ -182,33 +178,21 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
 
 class DeleteRestoreFavsView(generic.View):
 
-    
-    def __action_fav(self, request, *args, **kwargs):
+    DELETE_SUCCESS_MESSAGE = 'Game was deleted from favs'
+    RESTORE_SUCCESS_MESSAGE = 'Game was restored'
+
+    def __action_fav(self, request, game_id, manager, is_deleted_flag, message):
         try:
-            fav = request.user.favourites(manager='not_deleted_objects').filter(game__id=kwargs['game_id']).first()
-            fav.is_deleted = True
+            fav = request.user.favourites(manager=manager).filter(game__id=game_id).first()
+            fav.is_deleted = is_deleted_flag
             fav.save()
         except Exception as ex:
             return JsonResponse({'success': False, 'message': str(ex)})
 
-        return JsonResponse({'success': True, 'message': 'Game was deleted from favs'})
+        return JsonResponse({'success': True, 'message': message})
 
     def delete(self, request, *args, **kwargs):
-        try:
-            fav = request.user.favourites(manager='not_deleted_objects').filter(game__id=kwargs['game_id']).first()
-            fav.is_deleted = True
-            fav.save()
-        except Exception as ex:
-            return JsonResponse({'success': False, 'message': str(ex)})
-
-        return JsonResponse({'success': True, 'message': 'Game was deleted from favs'})
+        return self.__action_fav(request, kwargs['game_id'], 'not_deleted_objects', True, self.DELETE_SUCCESS_MESSAGE)
 
     def post(self, request, *args, **kwargs):
-        try:
-            fav = request.user.favourites(manager='objects').filter(game__id=kwargs['game_id']).first()
-            fav.is_deleted = False
-            fav.save()
-        except Exception as ex:
-            return JsonResponse({'success': False, 'message': str(ex)})
-
-        return JsonResponse({'success': True, 'message': 'Game was restored'})
+        return self.__action_fav(request, kwargs['game_id'], 'objects', False, self.RESTORE_SUCCESS_MESSAGE)
