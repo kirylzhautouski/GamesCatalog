@@ -34,7 +34,7 @@ class IndexView(generic.ListView):
     template_name = 'gamecatalog/home.html'
     context_object_name = 'games'
     model = Game
-    paginate_by = 6  # TODO: make pagination
+    paginate_by = 6
 
     def __handle_get_filter_params(self, possible_params, qs):
         checked_ids = list()
@@ -47,11 +47,16 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
 
-        self.qs = {
-            'search': self.request.GET.get('search', ''),
-            'rating_from': int(self.request.GET.get('rating_from', 0)),
-            'rating_to': int(self.request.GET.get('rating_to', 10)),
-        }
+        self.qs = dict()
+
+        if self.request.GET.get('search'):
+            self.qs['search'] = self.request.GET.get('search')
+
+        if self.request.GET.get('rating_from'):
+            self.qs['rating_from'] = int(self.request.GET.get('rating_from'))
+
+        if self.request.GET.get('rating_to'):
+            self.qs['rating_to'] = int(self.request.GET.get('rating_to'))
 
         self.platforms = Platform.objects.all()[:20]
         self.checked_platforms_ids = self.__handle_get_filter_params(self.platforms, self.qs)
@@ -73,8 +78,8 @@ class IndexView(generic.ListView):
         if self.checked_genres_ids:
             conditions.append(Q(genres__in=self.checked_genres_ids))
 
-        return Game.objects.filter(functools.reduce(operator.and_, conditions)).distinct() if conditions \
-            else Game.objects.all()
+        return Game.objects.filter(functools.reduce(operator.and_, conditions)).order_by('id').distinct() \
+            if conditions else Game.objects.order_by('id').all()
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
@@ -168,10 +173,10 @@ class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
     template_name = 'gamecatalog/favs.html'
     context_object_name = 'favourites'
     model = Favourite
-    paginate_by = 1  # TODO: 12
+    paginate_by = 12
 
     def get_queryset(self):
-        return Favourite.not_deleted_objects.filter(user=self.request.user)
+        return Favourite.not_deleted_objects.filter(user=self.request.user).order_by('id')
 
 
 class DeleteRestoreFavsView(generic.View):

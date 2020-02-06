@@ -28,6 +28,7 @@
 {% block content %}
 
 {% load static %}
+{% load game_tags %}
 
 <div>
 
@@ -180,15 +181,14 @@
             </div>
 
         <div class="pages">
-
-            {% for i in '123'|make_list %}
-
-                <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
-                        href="{% url 'gamecatalog:index' %}?page={{ forloop.counter }}{{ filter_params }}">
-                    {{ forloop.counter }}
-                </a>
-
-            {% endfor %}
+            <span class="step-links">
+                {% for page in page_obj.paginator.page_range %}
+                    <a class="page-button{% if request.GET|get_page == page %} current{% endif %}"
+                        href="?page={{page}}{% if filter_params %}&{{filter_params}}{% endif %}">
+                        {{page}}
+                    </a>
+                {% endfor %}
+            </span>
         </div>
     </div>
 </div>

@@ -16,3 +16,8 @@ def is_favourite(game, user):
 @register.filter
 def fav_count(game):
     return Favourite.objects.filter(game=game).count()
+
+
+@register.filter
+def get_page(d):
+    return int(d.get("page", "1"))

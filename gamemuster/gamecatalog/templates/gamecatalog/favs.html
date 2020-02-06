@@ -43,33 +43,14 @@
             {% endfor %}
         </div>
 
-        {% comment %} <div class="pages">
-
-            {% for i in '123'|make_list %}
-
-                <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
-                        href="{% url 'gamecatalog:favs' %}?page={{ forloop.counter }}">
-                    {{ forloop.counter }}
-                </a>
-
-            {% endfor %}
-        </div> {% endcomment %}
-
-        {% comment %} TODO: complete pagination {% endcomment %}
-        <div class="pagination">
+        <div class="pages">
             <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page=1">&laquo; 1</a>
-                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
-
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
-                {% endif %}
+                {% for page in page_obj.paginator.page_range %}
+                    <a class="page-button{% if request.GET|get_page == page %} current{% endif %}"
+                        href="?page={{page}}">
+                        {{page}}
+                    </a>
+                {% endfor %}
             </span>
         </div>
     </div>
