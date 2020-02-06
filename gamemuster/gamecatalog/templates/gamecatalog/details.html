@@ -1,6 +1,7 @@
 {% extends "gamecatalog/base/base.html" %}
 
 {% load static %}
+{% load game_tags %}
 
 {% block styles %}
     {% load static %}
@@ -27,13 +28,11 @@
 
                 </div>
 
-                {% if user.is_authenticated %}
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="submit" value="MUST" class="fav-submit {% if is_fav == True %}fav{% endif %}"/>
-                    </form>
+                {% if request.user.is_authenticated %}
+                    <a class="fav-submit {% if game|is_favourite:request.user %}fav{% endif %}">MUST</a>
                 {% endif %}
                 
+                <br>
                 <br>
 
                 <h7 class="details-genre">
@@ -182,3 +181,24 @@
     </div>
 
 {% endblock content %}
+
+{% block scripts %}
+
+    <script>
+        $(".fav-submit").click(function() {
+            $.ajax({
+                    url: '/games/' + {{game.id}} + '/',
+                    dataType: 'json',
+                    method: 'POST',
+                    success: function(data) {
+                        if (data.success) {
+                            $(".fav-submit").addClass("fav");
+                        }
+
+                        alert(data.message);
+                    },
+                });
+        });
+    </script>
+
+{% endblock scripts %}

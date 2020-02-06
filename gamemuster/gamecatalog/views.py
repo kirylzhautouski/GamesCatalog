@@ -3,9 +3,9 @@ from django.contrib.auth import mixins
 from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
+from django.db import IntegrityError
 from django.db.models import Q
-from django.db.utils import IntegrityError
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -14,12 +14,11 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import generic
 
 
-from requests import HTTPError
-
-
 import logging
 import functools
 import operator
+
+from urllib.parse import urlencode
 
 
 from .forms import SignUpForm
@@ -34,80 +33,44 @@ logger = logging.getLogger(__file__)
 class IndexView(generic.ListView):
     template_name = 'gamecatalog/home.html'
     context_object_name = 'games'
+    model = Game
+    paginate_by = 6
 
-    def __init__(self):
-        super().__init__()
-
-        self.current_page = 1
-
-        self.search_query = ''
-
-        self.rating_from = None
-        self.rating_to = None
-
-        self.platforms = Platform.objects.all()[:20]
-
-        self.checked_platforms_ids = None
-
-        self.genres = Genre.objects.all()[:20]
-
-        self.checked_genres_ids = None
-
-        self.filter_params = ''
-
-    def dispatch(self, request, *args, **kwargs):
-
-        try:
-            if 'page' in self.request.GET:
-                self.current_page = int(self.request.GET['page'])
-        except ValueError:
-            raise Http404()
-
-        if not (1 <= self.current_page <= 3):
-            raise Http404()
-
-        if 'search' in self.request.GET:
-            self.search_query = self.request.GET['search']
-
-            self.filter_params += f'&search={self.search_query}'
-
-        if 'rating_from' in self.request.GET:
-            self.rating_from = int(self.request.GET['rating_from'])
-
-            self.filter_params += f'&rating_from={self.rating_from}'
-
-        if 'rating_to' in self.request.GET:
-            self.rating_to = int(self.request.GET['rating_to'])
-
-            self.filter_params += f'&rating_to={self.rating_to}'
-
-        self.checked_platforms_ids = self.__handle_get_filter_params(
-            self.platforms)
-
-        self.checked_genres_ids = self.__handle_get_filter_params(
-            self.genres)
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def __handle_get_filter_params(self, possible_params):
-        params = set()
+    def __handle_get_filter_params(self, possible_params, qs):
+        checked_ids = list()
         for get_param in self.request.GET:
             for possible_param in possible_params:
                 if possible_param.slug == get_param:
-                    params.add(possible_param.id)
-
-                    self.filter_params += f'&{get_param}=on'
-
-        return params
+                    checked_ids.append(possible_param.id)
+                    qs[possible_param.slug] = 'on'
+        return checked_ids
 
     def get_queryset(self):
+
+        self.qs = dict()
+
+        if self.request.GET.get('search'):
+            self.qs['search'] = self.request.GET.get('search')
+
+        if self.request.GET.get('rating_from'):
+            self.qs['rating_from'] = int(self.request.GET.get('rating_from'))
+
+        if self.request.GET.get('rating_to'):
+            self.qs['rating_to'] = int(self.request.GET.get('rating_to'))
+
+        self.platforms = Platform.objects.all()[:20]
+        self.checked_platforms_ids = self.__handle_get_filter_params(self.platforms, self.qs)
+
+        self.genres = Genre.objects.all()[:20]
+        self.checked_genres_ids = self.__handle_get_filter_params(self.genres, self.qs)
+
         conditions = list()
 
-        if self.search_query:
-            conditions.append(Q(name__icontains=self.search_query))
+        if self.qs.get('search'):
+            conditions.append(Q(name__icontains=self.qs.get('search')))
 
-        if self.rating_from is not None and self.rating_to is not None:
-            conditions.append(Q(rating__range=(self.rating_from, self.rating_to)))
+        if self.qs.get('rating_from') and self.qs.get('rating_to'):
+            conditions.append(Q(rating__range=(self.qs.get('rating_from'), self.qs.get('rating_to'))))
 
         if self.checked_platforms_ids:
             conditions.append(Q(platforms__in=self.checked_platforms_ids))
@@ -115,87 +78,43 @@ class IndexView(generic.ListView):
         if self.checked_genres_ids:
             conditions.append(Q(genres__in=self.checked_genres_ids))
 
-        games = Game.objects
-        if conditions:
-            games = games.filter(functools.reduce(operator.and_, conditions))
-        games = games.distinct()[:18]
-        return games[(self.current_page - 1) * 6:
-                     (self.current_page - 1) * 6 + 6]
+        return Game.objects.filter(functools.reduce(operator.and_, conditions)).order_by('id').distinct() \
+            if conditions else Game.objects.order_by('id').all()
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        context['current_page'] = self.current_page
-
-        context['search_query'] = self.search_query
-
-        if self.rating_from is not None:
-            context['rating_from'] = self.rating_from
-
-        if self.rating_to is not None:
-            context['rating_to'] = self.rating_to
-
+        context['qs'] = self.qs
+        context['filter_params'] = urlencode(self.qs)
         context['platforms'] = self.platforms
         context['checked_platforms_ids'] = self.checked_platforms_ids
-
         context['genres'] = self.genres
         context['checked_genres_ids'] = self.checked_genres_ids
-
-        context['filter_params'] = self.filter_params
 
         return context
 
 
-class DetailsView(generic.TemplateView):
+class DetailsView(generic.DetailView):
     template_name = 'gamecatalog/details.html'
-
-    def __init__(self):
-        super().__init__()
-
-        self.game = {}
-        self.is_fav = False
-        self.tweets = []
-
-    def dispatch(self, request, *args, **kwargs):
-        self.game = Game.objects.filter(id=kwargs['game_id']).first()
-
-        if not self.game:
-            raise Http404()
-
-        user = self.request.user
-        if user.is_authenticated and user.favourites.filter(game=self.game).first():
-            self.is_fav = True
-
-        try:
-            self.tweets = twitter_api.TWITTER_API.get_tweets_for_game(
-                self.game.name)
-        except HTTPError:
-            pass
-
-        return super().dispatch(request, *args, **kwargs)
+    context_object_name = 'game'
+    model = Game
 
     def post(self, request, *args, **kwargs):
         try:
-            fav_game = self.request.user.favourites(manager='objects').filter(game=self.game).first()
+            fav_game = self.request.user.favourites(manager='objects').filter(game=self.get_object()).first()
             if fav_game:
                 fav_game.is_deleted = False
                 fav_game.save()
             else:
-                self.request.user.favourites.create(game=self.game)
+                self.request.user.favourites.create(game=self.get_object())
+        except IntegrityError as ex:
+            return JsonResponse({'success': False, 'message': str(ex)})
 
-            self.is_fav = True
-        except IntegrityError:
-            pass
-
-        return super().get(request, *args, *kwargs)
+        return JsonResponse({'success': True, 'message': "Game was successfully added to favs"})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context['game'] = self.game
-        context['is_fav'] = self.is_fav
-        context['tweets'] = self.tweets
-
+        context['tweets'] = twitter_api.TWITTER_API.get_tweets_for_game(self.get_object().name)
         return context
 
 
@@ -252,60 +171,31 @@ class ProfileView(mixins.LoginRequiredMixin, generic.TemplateView):
 
 class FavouritesView(mixins.LoginRequiredMixin, generic.ListView):
     template_name = 'gamecatalog/favs.html'
-    context_object_name = 'games'
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            if 'page' in self.request.GET:
-                self.current_page = int(self.request.GET['page'])
-            else:
-                self.current_page = 1
-        except ValueError:
-            raise Http404()
-
-        if not (1 <= self.current_page <= 3):
-            raise Http404()
-
-        return super().dispatch(request, *args, **kwargs)
+    context_object_name = 'favourites'
+    model = Favourite
+    paginate_by = 12
 
     def get_queryset(self):
-        games = Game.objects.filter(id__in=self.request.user.favourites(manager='not_deleted_objects')
-                                                            .values_list('game', flat=True))
-
-        if games:
-            for game in games:
-                game.users_added = len(Favourite.not_deleted_objects.all().filter(game=game))
-
-            return games[(self.current_page - 1) * 12:
-                         (self.current_page - 1) * 12 + 12]
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['current_page'] = self.current_page
-        return context
+        return Favourite.not_deleted_objects.filter(user=self.request.user).order_by('id')
 
 
-class SoftDeleteFromFavsView(generic.View):
+class DeleteRestoreFavsView(generic.View):
+
+    DELETE_SUCCESS_MESSAGE = 'Game was deleted from favs'
+    RESTORE_SUCCESS_MESSAGE = 'Game was restored'
+
+    def __action_fav(self, request, game_id, manager, is_deleted_flag, message):
+        try:
+            fav = request.user.favourites(manager=manager).filter(game__id=game_id).first()
+            fav.is_deleted = is_deleted_flag
+            fav.save()
+        except Exception as ex:
+            return JsonResponse({'success': False, 'message': str(ex)})
+
+        return JsonResponse({'success': True, 'message': message})
 
     def delete(self, request, *args, **kwargs):
-        try:
-            fav = request.user.favourites(manager='not_deleted_objects').filter(game__id=kwargs['game_id']).first()
-            fav.is_deleted = True
-            fav.save()
-        except Exception as ex:
-            return JsonResponse({'success': False, 'message': str(ex)})
-
-        return JsonResponse({'success': True, 'message': 'Game was deleted from favs'})
-
-
-class RestoreToFavsView(generic.View):
+        return self.__action_fav(request, kwargs['game_id'], 'not_deleted_objects', True, self.DELETE_SUCCESS_MESSAGE)
 
     def post(self, request, *args, **kwargs):
-        try:
-            fav = request.user.favourites(manager='objects').filter(game__id=kwargs['game_id']).first()
-            fav.is_deleted = False
-            fav.save()
-        except Exception as ex:
-            return JsonResponse({'success': False, 'message': str(ex)})
-
-        return JsonResponse({'success': True, 'message': 'Game was restored'})
+        return self.__action_fav(request, kwargs['game_id'], 'objects', False, self.RESTORE_SUCCESS_MESSAGE)

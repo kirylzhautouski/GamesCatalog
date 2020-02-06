@@ -1,6 +1,7 @@
 {% extends "gamecatalog/base/base.html" %}
 
 {% load static %}
+{% load game_tags %}
 
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{% static 'gamecatalog/favs_style.css' %}">
@@ -11,25 +12,25 @@
         <h1 class="title">My MUST</h1>
 
         <div class="container">
-            {% for game in games %}
+            {% for favourite in favourites %}
                 {% if forloop.counter0|divisibleby:"6" == True %}
                     <div class="row top-buffer">
                 {% endif %}
 
                 <div class="col-2 game">
-                    <img class="game-img" src="https://{{ game.cover_url }}" />
+                    <img class="game-img" src="https://{{ favourite.game.cover_url }}" />
 
                     <div class="container nopadding">
                         <div class="row nopadding">
                             <div class="col-7 nopadding">
-                                <a href="{% url 'gamecatalog:details' game.id %}">
-                                    <h3 class="game-name">{{ game.name }}</h3>
-                                    <p class="game-text">{% if game.keywords.0 %}{{ game.keywords.0 }}{% endif %}</p>
-                                    <p class="game-text">Users added: {{ game.users_added }}</p>
+                                <a href="{% url 'gamecatalog:details' favourite.game.id %}">
+                                    <h3 class="game-name">{{ favourite.game.name }}</h3>
+                                    <p class="game-text">{% if favourite.game.keywords.0 %}{{ favourite.game.keywords.0 }}{% endif %}</p>
+                                    <p class="game-text">Users added: {{ favourite.game|fav_count }}</p>
                                 </a>    
                             </div>
                             <div class="col-5 nopadding">
-                                <a class="game-must" id="{{game.id}}">UnMUST</a>
+                                <a class="game-must" id="{{favourite.game.id}}">UnMUST</a>
                             </div>
                         </div>
                     </div>
@@ -43,54 +44,20 @@
         </div>
 
         <div class="pages">
-
-            {% for i in '123'|make_list %}
-
-                <a class="page-button {% if current_page == forloop.counter %} current {% endif %}"
-                        href="{% url 'gamecatalog:favs' %}?page={{ forloop.counter }}">
-                    {{ forloop.counter }}
-                </a>
-
-            {% endfor %}
+            <span class="step-links">
+                {% for page in page_obj.paginator.page_range %}
+                    <a class="page-button{% if request.GET|get_page == page %} current{% endif %}"
+                        href="?page={{page}}">
+                        {{page}}
+                    </a>
+                {% endfor %}
+            </span>
         </div>
     </div>
 {% endblock content %}
 
 {% block scripts %}
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
     <script>
-
-        {% comment %} Not my code below, used for getting csrf token {% endcomment %}
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        var csrftoken = getCookie('csrftoken');
-        function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-
         $(".game-must").click(function() {
             var id = $(this).attr("id");
             var text = $(this).text();
