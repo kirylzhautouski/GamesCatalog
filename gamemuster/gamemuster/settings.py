@@ -38,6 +38,7 @@ ALLOWED_HOSTS = ['still-earth-06042.herokuapp.com',
 
 INSTALLED_APPS = [
     'gamecatalog.apps.GamecatalogConfig',
+    'gamesapi.apps.GamesapiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -167,3 +169,9 @@ if 'localhost' not in os.getenv('DATABASE_URL'):
 
 BROKER_URL = f"amqp://{os.getenv('BROKER_USER')}:{os.getenv('BROKER_PASSWORD')}@localhost:5672/"\
              f"{os.getenv('BROKER_HOST')}"
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
