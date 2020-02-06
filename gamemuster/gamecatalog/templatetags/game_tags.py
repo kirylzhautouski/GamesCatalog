@@ -15,7 +15,7 @@ def is_favourite(game, user):
 
 @register.filter
 def fav_count(game):
-    return Favourite.objects.filter(game=game).count()
+    return Favourite.not_deleted_objects.filter(game=game).count()
 
 
 @register.filter
