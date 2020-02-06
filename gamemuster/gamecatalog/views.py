@@ -3,6 +3,7 @@ from django.contrib.auth import mixins
 from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
@@ -93,21 +94,18 @@ class DetailsView(generic.DetailView):
     context_object_name = 'game'
     model = Game
 
-    # TODO: use AJAX to POST
-    # def post(self, request, *args, **kwargs):
-    #     try:
-    #         fav_game = self.request.user.favourites(manager='objects').filter(game=self.get_object()).first()
-    #         if fav_game:
-    #             fav_game.is_deleted = False
-    #             fav_game.save()
-    #         else:
-    #             self.request.user.favourites.create(game=self.get_object())
+    def post(self, request, *args, **kwargs):
+        try:
+            fav_game = self.request.user.favourites(manager='objects').filter(game=self.get_object()).first()
+            if fav_game:
+                fav_game.is_deleted = False
+                fav_game.save()
+            else:
+                self.request.user.favourites.create(game=self.get_object())
+        except IntegrityError as ex:
+            return JsonResponse({'success': False, 'message': str(ex)})
 
-    #         self.is_fav = True
-    #     except IntegrityError:
-    #         pass
-
-    #     return super().get(request, *args, *kwargs)
+        return JsonResponse({'success': True, 'message': "Game was successfully added to favs"})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

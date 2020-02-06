@@ -31,13 +31,15 @@
 
 .fav-submit {
     background-color: #E23232;
-    color: white;
+    color: white !important;
     border: none;
     padding-top: 5px;
     padding-bottom: 5px;
     box-shadow: 0px 5px 5px 0px rgba(50, 50, 50, 0.75);
     padding-right: 8px;
     padding-left: 8px;
+    margin-bottom: 20px;
+    cursor: pointer;
     font-size: 20px;
     font-weight: 800;
 }
