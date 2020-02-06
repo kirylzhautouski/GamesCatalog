@@ -4,6 +4,8 @@ from gamecatalog.models import User, Platform, Genre, Keyword, Game
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    # TODO: add relations with fav games
+
     url = serializers.HyperlinkedIdentityField(view_name='gamesapi:user-detail')
 
     class Meta:
@@ -36,6 +38,8 @@ class KeywordSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class GameSerializer(serializers.HyperlinkedModelSerializer):
+    # TODO: add relations with screenshots, platforms, genres, keywords
+
     url = serializers.HyperlinkedIdentityField(view_name='gamesapi:game-detail')
 
     class Meta:
