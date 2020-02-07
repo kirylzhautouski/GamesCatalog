@@ -66,7 +66,7 @@ class Command(BaseCommand):
                     game_screenshots = single_game_info.get('screenshots')
                     if game_screenshots:
                         for screenshot in game_screenshots:
-                            game.screenshots.get_or_create(url=screenshot)
+                            game.screenshots.get_or_create(image_url=screenshot)
         except Exception as ex:
             raise CommandError(ex)
 
