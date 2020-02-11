@@ -163,12 +163,12 @@ EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-if 'localhost' not in os.getenv('DATABASE_URL'):
+if 'localhost' not in os.getenv('DATABASE_URL') and 'db' not in os.getenv('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
-BROKER_URL = f"amqp://{os.getenv('BROKER_USER')}:{os.getenv('BROKER_PASSWORD')}@localhost:5672/"\
-             f"{os.getenv('BROKER_HOST')}"
+BROKER_URL = f"amqp://{os.getenv('RABBITMQ_DEFAULT_USER')}:{os.getenv('RABBITMQ_DEFAULT_PASS')}"\
+             f"@{os.getenv('BROKER_HOST')}:5672/{os.getenv('BROKER_VHOST')}"
 
 
 REST_FRAMEWORK = {

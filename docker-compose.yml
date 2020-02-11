@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+    db:
+        image: postgres
+    web:
+        build: .
+        image: &app app
+        env_file: &envfile
+            - docker.env
+        command: ./gamemuster/start.sh
+        volumes: 
+            - .:/code
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+            - broker
+    worker:
+        build: .
+        image: *app
+        env_file: *envfile
+        command: ./gamemuster/celery.sh
+        volumes:
+            - .:/code
+        depends_on:
+            - db
+            - broker
+    broker:
+        image: rabbitmq:3
+        env_file: *envfile
+        ports:
+            - "5675:5672"
