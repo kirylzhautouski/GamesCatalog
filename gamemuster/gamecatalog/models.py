@@ -17,13 +17,22 @@ class Platform(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.CharField(max_length=40, unique=True)
 
+    def __str__(self):
+        return self.slug
+
 
 class Genre(models.Model):
     slug = models.CharField(max_length=100, unique=True)
 
+    def __str__(self):
+        return self.slug
+
 
 class Keyword(models.Model):
     slug = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.slug
 
 
 class Game(models.Model):
@@ -39,6 +48,9 @@ class Game(models.Model):
     platforms = models.ManyToManyField(Platform, related_name='games')
     genres = models.ManyToManyField(Genre, related_name='games')
     keywords = models.ManyToManyField(Keyword, related_name='games')
+
+    def __str__(self):
+        return self.name
 
 
 class FavouriteNotDeletedManager(models.Manager):
@@ -62,4 +74,4 @@ class Favourite(models.Model):
 
 class Screenshot(models.Model):
     game = models.ForeignKey(Game, related_name='screenshots', on_delete=models.CASCADE)
-    url = models.URLField(unique=True)
+    image_url = models.URLField(unique=True)

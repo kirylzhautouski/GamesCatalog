@@ -20,4 +20,5 @@ urlpatterns = [
     path('', include('gamecatalog.urls')),
     path('api/', include('gamesapi.urls', namespace='gamesapi')),
     path('admin/', admin.site.urls),
+    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
