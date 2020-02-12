@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+    server:
+        image: nginx
+        ports:
+            - "80:80"
+        volumes:
+            - ./deploymentconf:/etc/nginx/conf.d/
+        environment: 
+            - NGINX_PORT=80
+        command: /bin/bash -c "exec nginx -g 'daemon off;'"
+        depends_on: 
+            - web
     db:
         image: postgres
     web:
@@ -11,8 +22,6 @@ services:
         command: ./gamemuster/start.sh
         volumes: 
             - .:/code
-        ports:
-            - "8000:8000"
         depends_on:
             - db
             - broker
