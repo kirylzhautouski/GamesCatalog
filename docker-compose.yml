@@ -22,8 +22,6 @@ services:
         command: ./gamemuster/start.sh
         volumes: 
             - .:/code
-        ports:
-            - "8001:8001"
         depends_on:
             - db
             - broker
